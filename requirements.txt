@@ -1,0 +1,4 @@
+streamlit==0.86.0
+urllib3==1.26.4
+scikit-image==0.18.1
+numpy==1.20.2
