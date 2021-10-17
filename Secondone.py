@@ -80,6 +80,7 @@ elif (option=="Equation solver"):
     st.write("**Method of variation of parameters**")
     st.write("For finding particular solutions of 2nd order ODE,we use this method")
     st.latex(r'''\text{If } y_1,y_2 \text{ are general solution of the homogeneous form of our ODE then we multiply them by } v_1=-\int \frac{y_1R(x)}{W(y_1,y_2)} \text{ and } v_2=\int \frac{y_2R(x)}{W(y_1,y_2)} \Rightarrow y_p=v_1y_1+v_2y_2''')
+    st.latex(r'''\text{If R(x) happens to be a sum or difference of either of the three forms then we can separately find solutions for each case and add or subtract according to the question=>Superposition principle is applied)}''')
     st.write("**Operator method**")
     st.latex(r'''\text{Any differential equation can be written in operator form where D=} \frac{d}{dx} \Rightarrow \frac{dy}{dx}+r(x)y=l(x)<=>(D-r)y=l(x) \Rightarrow \frac{l(x)}{D-r}=e^{rx} \int e^{-rx}l(x)dx=y''')
     st.write("**Some special notes**")
