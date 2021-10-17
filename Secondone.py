@@ -257,7 +257,7 @@ else:
     st.write("This formula is only valid for Newtonian fluids for non-Newtonian fluids following the general formula")
     st.latex(r'''\tau=m|\frac{du}{dy}|^{n-1}\frac{du}{dy}''')
     st.write("Following plot shows variation where m is flow consistency index and n is flow behaviour index")
-    st.image("Fig21-These-are-a-Bingham-plastics-b-pseudoplastic-fluids-and-c-dilatant.png",width=400)
+    st.image("https://www.researchgate.net/profile/Issam-Ashqer/publication/275526328/figure/fig2/AS:614162166202397@1523439079676/Fig21-These-are-a-Bingham-plastics-b-pseudoplastic-fluids-and-c-dilatant.png",width=400)
     st.write("Bulk Modulus has the following formula")
     st.latex(r'''K=\frac{dp}{-dV/V}''')
     st.write("For isothermal process: K=p")
