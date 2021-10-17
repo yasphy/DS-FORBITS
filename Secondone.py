@@ -66,7 +66,7 @@ elif (option=="Equation solver"):
     st.latex(r''' y''+P(x)y'+Q(x)y=R(x) ''')   
     st.write("When R(x)=0, its called homogeneous equation")
     st.latex(r'''\text{Theorem 1:If } y_1 \text{ is a particular solution of non homomgeneous equation and } y_2 \text{ is the general solution of homogeneous solution then } y=y_1+y_2 \text{ is the general solution of the differential equation}''')
-    st.write(r'''\text{Theorem 2:If }y_1,y_2 \text{ are 2 particular linearly independent solutions of 2nd order Linear Homogeneous ODE then }cy_1+dy_2 \text{ is its general solution where c and d are arbitrary constants.}''')
+    st.latex(r'''\text{Theorem 2:If }y_1,y_2 \text{ are 2 particular linearly independent solutions of 2nd order Linear Homogeneous ODE then }cy_1+dy_2 \text{ is its general solution where c and d are arbitrary constants.}''')
     st.latex(r'''\text{Wronskian is defined as } W(y_1,y_2)=\begin{vmatrix}
    y_1 & y_1' \\
    y_2 & y_2'
