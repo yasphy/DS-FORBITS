@@ -71,7 +71,7 @@ elif (option=="Equation solver"):
    y_1 & y_1' \\
    y_2 & y_2'
 \end{vmatrix}''')
-    st.write("Wronskian Theorem:W(y_1,y_2) is either identically 0(Linearly dependent) or never 0(Linearly independent) for a pair y_1,y_2 which are solutions(Non-trivial) of 2nd order Linear homogeneous ODE provided P(x) and Q(x) are continous in the interval where the solutions are given.")
+    st.latex(r'''\text{Wronskian Theorem:}W(y_1,y_2) \text{ is either identically 0(Linearly dependent) or never 0(Linearly independent) for a pair} y_1,y_2 \text{ which are solutions(Non-trivial) of 2nd order Linear homogeneous ODE provided P(x) and Q(x) are continous in the interval where the solutions are given.}''')
     st.write("For linear independent solution of 2nd order Linear Homogeneous ODE , we can multiply solution y with v(x) such that")
     st.latex(r'''v=\int \frac{1}{y^2} e^{\int -Pdx} dx''')
     st.write("**Method of undetermined coefficients**")
@@ -80,6 +80,8 @@ elif (option=="Equation solver"):
     st.write("**Method of variation of parameters**")
     st.write("For finding particular solutions of 2nd order ODE,we use this method")
     st.latex(r'''\text{If } y_1,y_2 \text{ are general solution of the homogeneous form of our ODE then we multiply them by } v_1=-\int \frac{y_1R(x)}{W(y_1,y_2)} \text{ and } v_2=\int \frac{y_2R(x)}{W(y_1,y_2)} \Rightarrow y_p=v_1y_1+v_2y_2''')
+    st.write("**Operator method**")
+    st.latex(r'''\text{Any differential equation can be written in operator form where D=} \frac{d}{dx} \Rightarrow \frac{dy}{dx}+r(x)y=l(x)<=>(D-r)y=l(x) \Rightarrow \frac{l(x)}{D-r}=e^{r(x)} \int e^{-rx}l(x)dx=y''')
     st.write("**Some special notes**")
     st.latex(r'''\text{Bessel's equation:} x^{2}y''+xy'+(x^2-p^2)y=0''')
     st.image("https://www.accessengineeringlibrary.com/binary/mheaeworks/1d6532c8b2902e63/5de03eb02a7bc0927cc4bf3ce6e28730f07ecd096d58d72d67963522a643660c/p2001b2afg4630007vpp.png")
