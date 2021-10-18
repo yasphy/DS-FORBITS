@@ -99,7 +99,7 @@ elif (option=="Equation solver"):
     st.latex(r'''\Darr''')
     st.latex(r'''\text{A recursive relation in the coefficients is obtained}''')
     st.write("**Singular points**")
-    st.latex(r'''\text{x=a is a regular singular point if either P(x) or Q(x) or both are non-analytic at x=a but xP(x) and } x^2P(x) \text{ is analytic at x=a}''')
+    st.latex(r'''\text{x=a is a regular singular point if either P(x) or Q(x) or both are non-analytic at x=a but xP(x) and } x^2Q(x) \text{ is analytic at x=a}''')
     st.write("**Frobenius solution of differential equation**")
     st.latex(r'''\text{Solution is of form } y=x^{m}\sum_{n=0}^{\infin} a_nx^n \text{ and is applicable if point of power series expansion is a regular singular point}''')
     
