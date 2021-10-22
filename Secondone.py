@@ -11,7 +11,7 @@ import funct
 from urllib.request import urlopen,Request
 from skimage.color import convert_colorspace
 st.title("WaterMark Maker and Equation solver")
-option=st.radio("Select what you want",("WaterMark","Equation solver","Fluid Mechanics","Image processing"))
+option=st.radio("Select what you want",("WaterMark","Equation solver","Fluid Mechanics","Image processing","Elementary real analysis theorems"))
 if (option=="WaterMark"):
     file1=st.file_uploader("Select the files in  such a way that second file is watermark file",type=["jpg",'png'],accept_multiple_files=True)
     k=[]
@@ -36,6 +36,60 @@ if (option=="WaterMark"):
             o=st.number_input("Choose a number between 1 and 0")
             dst=cv.addWeighted(k[1],o,k[0],1-o,0)
             st.image(dst,channels='BGR')
+elif (option=="Elementary real analysis theorems"):
+	    st.latex(r'''\text{Rational zeros theorem:Suppose } c_0,c_1,c_2,... \text{are integers and r is a rational number satisfying the polynomial equation } c_nx^n+c_{n-1}x^{n-1}+....c_1x+c_0=0 \text{ where } n \geq 1,c_n \not = 1 \text{ and } c_0 \not = 0.\text{.Let } r=\frac{c}{d} \text{ where c,d are integers having no common factors and d} \not =0 \text{.Then c divides } c_0 \text{ and d divides } c_n''')
+    st.latex(r'''\text{Consequences of field properties}''')
+    st.latex(r'''1.) a+c=b+c \rArr a=b''')
+    st.latex(r'''2.) a.0=0   \forall  a''')
+    st.latex(r'''3.) (-a)b=-ab  \forall  a,b''')
+    st.latex(r'''4.) (-a)(-b)=ab  \forall  a,b''')
+    st.latex(r'''5.) ac=bc \text{ and } c \not = 0 \rArr a=b''')
+    st.latex(r'''6.) ab=0 \rArr \text{ either a=0 or b=0; for } a,b,c \in R''')
+    st.latex(r'''\text{Consequences of properties of ordered field:}''')
+    st.latex(r'''1.) \text{If } a \le b \text{ then } -b \le -a''')
+    st.latex(
+        r'''2.) \text{If } a \le b \text{ and } c \le 0 \text{ then } bc \le ac''')
+    st.latex(
+        r'''3.) \text{If } 0 \le a \text{ and } 0 \le a \text{ then } 0 \le ab''')
+    st.latex(r'''4.)  0 \le a^2 \forall a''')
+    st.latex(r'''5.) \text{If } 0 \le a \text{ then } 0 \le a^{-1}''')
+    st.latex(
+        r'''6.) \text{If } 0 \le a \le b \text{ then } 0 \le b^{-1} \le a^{-1}''')
+    st.latex(
+        r'''\text{Archimedean Property:If a>0 and b>0, then for some positive integer n,we have na>b}''')
+    st.latex(
+        r'''\text{Denseness of Q:If } a,b \in R \text{ and a<b,then there is a rational r} \in Q \text{ such that a<r<b} ''')
+    st.latex(r'''\text{Theorem on sequences}''')
+    st.latex(r'''1.) \text{Convergent sequences are bounded}''')
+    st.latex(r'''2.) \text{If the sequence } (s_n) \text{ converges to s and k is in R, then the sequence } (ks_n) \text{ converges to ks.That is } \lim ks_n=k \lim s_n''')
+    st.latex(r'''3.) \text{If } (s_n) \text{ converges to s and } (t_n) \text{ converges to t, then } (s_n+t_n) \text{ converges to s+t and } (s_nt_n) \text{ converges to st}''')
+    st.latex(r'''4.) \text{If } (s_n) \text{ converges to s,if } s_n \not = 0 \forall n \text{ and if } s \not = 0 \text{ then } (1/s_n) \text{ converges to 1/s.}''')
+    st.latex(
+        r'''5.) \lim_{n \rarr \infty} \frac{1}{n^p} =0 \text { for p>0}''')
+    st.latex(r'''6.) \lim_{n \rarr \infty} a^n=0 \text{ if |a|<1}''')
+    st.latex(r'''7.) \lim (n^{1/n})=1''')
+    st.latex(r'''8.) \lim{n \rarr \infty} (a^{1/n})=1 \text{ for a>0}''')
+    st.latex(r'''9.) \text{Let } (s_n) \text{ and } (t_n) \text{ be two sequences such that } \lim s_n = + \infty \text{ and } \lim t_n > 0\text{.Then } \lim s_nt_n = + \infty ''')
+    st.latex(r'''10.) \text{For a sequence } (s_n) \text{ of positive real numbers ,we have } \lim s_n=+ \infty \text{ if and only if } \lim \frac{1}{s_n}=0''')
+    st.latex(r'''11.) \text{All bounded monotone sequences coverge}''')
+    st.latex(r'''12.) \text{If } (s_n) \text{ is an unbounded increasing sequence, then } \lim s_n=+ \infty ''')
+    st.latex(r'''13.) \text{If } (s_n) \text{ is an unbounded decreasing sequence, then } \lim s_n=- \infty''')
+    st.latex(r'''14.) \text{Let } (s_n) \text{ be a sequence in R and if } \lim s_n \text{ is defined ,then } \lim s_n=\lim\inf s_n=\lim \sup s_n ''')
+    st.latex(r'''15.) \text{Let } (s_n) \text{ be a sequence in R and if } \lim \inf s_n= \lim \sup s_n \text{ then } \lim s_n \text{ is defined and } \lim s_n=\lim\inf s_n=\lim \sup s_n''')
+    st.latex(r'''16.) \text{Convergent sequences are Cauchy sequences}''')
+    st.latex(r'''17.) \text{A sequence is convergent if and only if it is a Cauchy sequence} ''')
+    st.latex(r'''18.) \text{Every sequence }(s_n) \text{ has a monotonic subsequence}''')
+    st.latex(r'''19.) \text{Bolzano-Weierstrass theorem:Every bounded sequence has a convergent subsequence} ''')
+    st.latex(r'''20.) \text{If } (s_n) \text{ converges to a positive real number s and } (t_n)\text{ is any sequence then } \lim \sup s_nt_n= s. \lim \sup t_n''')
+    st.latex(r'''21.) \text{Let S denote the set of subsequential limits of a sequence } (s_n) \text{.Suppose } (t_n) \text{ is a sequence in } S \cap R \text{ and that } t= \lim t_n \text{.Then t belongs to S}''')
+    st.latex(r'''\text{Theorems on continuity}''')
+    st.latex(r'''22.) \text{If f is continous on a closed interval [a,b], then f is uniformly continous on [a,b]}''')
+    st.latex(r'''23.) \text{A real-valued function f on (a,b) is uniformly continous on (a,b) if and only if it can be extended to a continous function \~{f}}  \text{ on (a,b)}''')
+    st.latex(r'''24.) \text{Let } f_1,f_2 \text{ be two function for which } L_1= \lim_{x \rarr a} f_1(x),L_2= \lim_{x \rarr a} f_2(x) \text{ exist and are finite. Then } \lim_{x \rarr a} (f_1+f_2) = L_1+L_2 ,\lim_{x \rarr a} (f_1*f_2) = L_1*L_2,\lim_{x \rarr a} (f_1+f_2) = L_1+L_2, \lim_{x \rarr a} (f_1/f_2) = L_1/L_2 \text{ provided } L_2 \not = 0,f_2(x) \not = 0 \forall x \in S ''')
+    st.latex(r'''25.) \text{Epsilon-delta definition of limit:} \text{Let f be a function defined on a subset S of R, let a be a real number that is the limit of some sequence in S, and let L be a real number then } \lim_{x \rarr a} f(x) = L''') 
+    st.latex(r'''\text{ if and only if ,for each } \epsilon > 0 \text{ there exists } \delta >0 \text{ such that } x \in S \text{ and } |x-a|< \delta \Rarr |f(x)-L|< \epsilon''')
+    st.latex(r'''26.) \text{Let f be a function defined on a subset J for some open interval J containing a and let L be a real number then } \lim_{x \rarr a} f(x) = L''')
+    st.latex(r'''\text{ if and only if ,for each } \epsilon > 0 \text{ there exists } \delta >0 \text{ such that } x \in S \text{ and } |x-a|< \delta \Rarr |f(x)-L|< \epsilon''')
 elif (option=="Equation solver"):
     st.write("For exact differential equation of the given form")
     st.latex(r'''\frac{dy}{dx}=Mdx+Ndy''')
