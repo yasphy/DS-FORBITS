@@ -37,7 +37,7 @@ if (option=="WaterMark"):
             dst=cv.addWeighted(k[1],o,k[0],1-o,0)
             st.image(dst,channels='BGR')
 elif (option=="Elementary real analysis theorems"):
-	    st.latex(r'''\text{Rational zeros theorem:Suppose } c_0,c_1,c_2,... \text{are integers and r is a rational number satisfying the polynomial equation } c_nx^n+c_{n-1}x^{n-1}+....c_1x+c_0=0 \text{ where } n \geq 1,c_n \not = 1 \text{ and } c_0 \not = 0.\text{.Let } r=\frac{c}{d} \text{ where c,d are integers having no common factors and d} \not =0 \text{.Then c divides } c_0 \text{ and d divides } c_n''')
+    st.latex(r'''\text{Rational zeros theorem:Suppose } c_0,c_1,c_2,... \text{are integers and r is a rational number satisfying the polynomial equation } c_nx^n+c_{n-1}x^{n-1}+....c_1x+c_0=0 \text{ where } n \geq 1,c_n \not = 1 \text{ and } c_0 \not = 0.\text{.Let } r=\frac{c}{d} \text{ where c,d are integers having no common factors and d} \not =0 \text{.Then c divides } c_0 \text{ and d divides } c_n''')
     st.latex(r'''\text{Consequences of field properties}''')
     st.latex(r'''1.) a+c=b+c \rArr a=b''')
     st.latex(r'''2.) a.0=0   \forall  a''')
