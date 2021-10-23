@@ -133,7 +133,7 @@ elif (option=="Equation solver"):
     st.write("For linear independent solution of 2nd order Linear Homogeneous ODE , we can multiply solution y with v(x) such that")
     st.latex(r'''v=\int \frac{1}{y^2} e^{\int -Pdx} dx''')
     st.write("**Section 17**")
-    st.latex(r'''\text{If } y''+P(x)y'+Q(x)y=0 \text{ is our differential equation under consideration and iff } (Q'+PQ)/Q^{3/2}=c \text{ then equation can be solved using independent variable as } z=\int Q(x)^{1/2} dx''')
+    st.latex(r'''\text{If } y''+P(x)y'+Q(x)y=0 \text{ is our differential equation under consideration and iff } (Q'+2PQ)/Q^{3/2}=c \text{ then equation can be solved using independent variable as } z=\int Q(x)^{1/2} dx''')
     st.write("**Method of undetermined coefficients**")
     st.latex(r'''\text{For solving equation of type } y''+P(x)y'+Q(x)y=R(x) \text{ where R(x) is of form } e^{ax},Asin(x)+Bcos(x) \text{ and } a_0+a_1x+a_{2}x^2+....''')
     st.latex(r'''\text{The solution is of form:} xR(x) \text{ or } x^2R(x) \text{ with undetermined coefficients } A_n''')
