@@ -1,367 +1,1087 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Aug 14 17:11:14 2021
-
-@author: admin
-"""
 import cv2 as cv
 import numpy as np
 import streamlit as st
 import funct
-from urllib.request import urlopen,Request
+from urllib.request import urlopen, Request
 from skimage.color import convert_colorspace
+import work
+import torch.nn as nn
 st.title("WaterMark Maker and Equation solver")
-option=st.radio("Select what you want",("WaterMark","Equation solver","Fluid Mechanics","Image processing","Elementary real analysis theorems"))
-if (option=="WaterMark"):
-    file1=st.file_uploader("Select the files in  such a way that second file is watermark file",type=["jpg",'png'],accept_multiple_files=True)
-    k=[]
+option = st.radio("Select what you want", ("WaterMark",
+                  "Fluid Mechanics", "Image processing","Neural Networks","ROI"))
+        
+if (option == "WaterMark"):
+    file1 = st.file_uploader("Select the files in  such a way that second file is watermark file", type=[
+                             "jpg", 'png'], accept_multiple_files=True)
+    k = []
     for uploaded_file in file1:
-        file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
+        file_bytes = np.asarray(
+            bytearray(uploaded_file.read()), dtype=np.uint8)
         opencv_image = cv.imdecode(file_bytes, 1)
         # Now do something with the image! For example, let's display it:
         k.append(opencv_image)
-    if len(k)>1:
+    if len(k) > 1:
         for i in range(2):
             st.image(k[i], channels="BGR")
-    if (file1 is not None) and (len(k)>=2):
-        k1=k[0].shape
-        k12=k[1].shape
-        st.write("shapes are ",str(k1),"and",str(k12))
-        if (k1!=k12):
-            h,w,c=k[0].shape
-            k[1]=cv.resize(k[1],(w,h))
-            k13=k[0].shape
-            k14=k[1].shape
-            st.write("shapes are ",str(k13),"and",str(k14))
-            o=st.number_input("Choose a number between 1 and 0")
-            dst=cv.addWeighted(k[1],o,k[0],1-o,0)
-            st.image(dst,channels='BGR')
-elif (option=="Elementary real analysis theorems"):
-    st.latex(r'''\text{Rational zeros theorem:Suppose } c_0,c_1,c_2,... \text{are integers and r is a rational number satisfying the polynomial equation } c_nx^n+c_{n-1}x^{n-1}+....c_1x+c_0=0 \text{ where } n \geq 1,c_n \not = 1 \text{ and } c_0 \not = 0.\text{.Let } r=\frac{c}{d} \text{ where c,d are integers having no common factors and d} \not =0 \text{.Then c divides } c_0 \text{ and d divides } c_n''')
-    st.latex(r'''\text{Consequences of field properties}''')
-    st.latex(r'''1.) a+c=b+c \rArr a=b''')
-    st.latex(r'''2.) a.0=0   \forall  a''')
-    st.latex(r'''3.) (-a)b=-ab  \forall  a,b''')
-    st.latex(r'''4.) (-a)(-b)=ab  \forall  a,b''')
-    st.latex(r'''5.) ac=bc \text{ and } c \not = 0 \rArr a=b''')
-    st.latex(r'''6.) ab=0 \rArr \text{ either a=0 or b=0; for } a,b,c \in R''')
-    st.latex(r'''\text{Consequences of properties of ordered field:}''')
-    st.latex(r'''1.) \text{If } a \le b \text{ then } -b \le -a''')
-    st.latex(
-        r'''2.) \text{If } a \le b \text{ and } c \le 0 \text{ then } bc \le ac''')
-    st.latex(
-        r'''3.) \text{If } 0 \le a \text{ and } 0 \le a \text{ then } 0 \le ab''')
-    st.latex(r'''4.)  0 \le a^2 \forall a''')
-    st.latex(r'''5.) \text{If } 0 \le a \text{ then } 0 \le a^{-1}''')
-    st.latex(
-        r'''6.) \text{If } 0 \le a \le b \text{ then } 0 \le b^{-1} \le a^{-1}''')
-    st.latex(
-        r'''\text{Archimedean Property:If a>0 and b>0, then for some positive integer n,we have na>b}''')
-    st.latex(
-        r'''\text{Denseness of Q:If } a,b \in R \text{ and a<b,then there is a rational r} \in Q \text{ such that a<r<b} ''')
-    st.latex(r'''\text{Theorem on sequences}''')
-    st.latex(r'''1.) \text{Convergent sequences are bounded}''')
-    st.latex(r'''2.) \text{If the sequence } (s_n) \text{ converges to s and k is in R, then the sequence } (ks_n) \text{ converges to ks.That is } \lim ks_n=k \lim s_n''')
-    st.latex(r'''3.) \text{If } (s_n) \text{ converges to s and } (t_n) \text{ converges to t, then } (s_n+t_n) \text{ converges to s+t and } (s_nt_n) \text{ converges to st}''')
-    st.latex(r'''4.) \text{If } (s_n) \text{ converges to s,if } s_n \not = 0 \forall n \text{ and if } s \not = 0 \text{ then } (1/s_n) \text{ converges to 1/s.}''')
-    st.latex(
-        r'''5.) \lim_{n \rarr \infty} \frac{1}{n^p} =0 \text { for p>0}''')
-    st.latex(r'''6.) \lim_{n \rarr \infty} a^n=0 \text{ if |a|<1}''')
-    st.latex(r'''7.) \lim (n^{1/n})=1''')
-    st.latex(r'''8.) \lim{n \rarr \infty} (a^{1/n})=1 \text{ for a>0}''')
-    st.latex(r'''9.) \text{Let } (s_n) \text{ and } (t_n) \text{ be two sequences such that } \lim s_n = + \infty \text{ and } \lim t_n > 0\text{.Then } \lim s_nt_n = + \infty ''')
-    st.latex(r'''10.) \text{For a sequence } (s_n) \text{ of positive real numbers ,we have } \lim s_n=+ \infty \text{ if and only if } \lim \frac{1}{s_n}=0''')
-    st.latex(r'''11.) \text{All bounded monotone sequences coverge}''')
-    st.latex(r'''12.) \text{If } (s_n) \text{ is an unbounded increasing sequence, then } \lim s_n=+ \infty ''')
-    st.latex(r'''13.) \text{If } (s_n) \text{ is an unbounded decreasing sequence, then } \lim s_n=- \infty''')
-    st.latex(r'''14.) \text{Let } (s_n) \text{ be a sequence in R and if } \lim s_n \text{ is defined ,then } \lim s_n=\lim\inf s_n=\lim \sup s_n ''')
-    st.latex(r'''15.) \text{Let } (s_n) \text{ be a sequence in R and if } \lim \inf s_n= \lim \sup s_n \text{ then } \lim s_n \text{ is defined and } \lim s_n=\lim\inf s_n=\lim \sup s_n''')
-    st.latex(r'''16.) \text{Convergent sequences are Cauchy sequences}''')
-    st.latex(r'''17.) \text{A sequence is convergent if and only if it is a Cauchy sequence} ''')
-    st.latex(r'''18.) \text{Every sequence }(s_n) \text{ has a monotonic subsequence}''')
-    st.latex(r'''19.) \text{Bolzano-Weierstrass theorem:Every bounded sequence has a convergent subsequence} ''')
-    st.latex(r'''20.) \text{If } (s_n) \text{ converges to a positive real number s and } (t_n)\text{ is any sequence then } \lim \sup s_nt_n= s. \lim \sup t_n''')
-    st.latex(r'''21.) \text{Let S denote the set of subsequential limits of a sequence } (s_n) \text{.Suppose } (t_n) \text{ is a sequence in } S \cap R \text{ and that } t= \lim t_n \text{.Then t belongs to S}''')
-    st.latex(r'''\text{Theorems on continuity}''')
-    st.latex(r'''22.) \text{If f is continous on a closed interval [a,b], then f is uniformly continous on [a,b]}''')
-    st.latex(r'''23.) \text{A real-valued function f on (a,b) is uniformly continous on (a,b) if and only if it can be extended to a continous function \~{f}}  \text{ on (a,b)}''')
-    st.latex(r'''24.) \text{Let } f_1,f_2 \text{ be two function for which } L_1= \lim_{x \rarr a} f_1(x),L_2= \lim_{x \rarr a} f_2(x) \text{ exist and are finite. Then } \lim_{x \rarr a} (f_1+f_2) = L_1+L_2 ,\lim_{x \rarr a} (f_1*f_2) = L_1*L_2,\lim_{x \rarr a} (f_1+f_2) = L_1+L_2, \lim_{x \rarr a} (f_1/f_2) = L_1/L_2 \text{ provided } L_2 \not = 0,f_2(x) \not = 0 \forall x \in S ''')
-    st.latex(r'''25.) \text{Epsilon-delta definition of limit:} \text{Let f be a function defined on a subset S of R, let a be a real number that is the limit of some sequence in S, and let L be a real number then } \lim_{x \rarr a} f(x) = L''') 
-    st.latex(r'''\text{ if and only if ,for each } \epsilon > 0 \text{ there exists } \delta >0 \text{ such that } x \in S \text{ and } |x-a|< \delta \Rarr |f(x)-L|< \epsilon''')
-    st.latex(r'''26.) \text{Let f be a function defined on a subset J for some open interval J containing a and let L be a real number then } \lim_{x \rarr a} f(x) = L''')
-    st.latex(r'''\text{ if and only if ,for each } \epsilon > 0 \text{ there exists } \delta >0 \text{ such that } x \in S \text{ and } |x-a|< \delta \Rarr |f(x)-L|< \epsilon''')
-elif (option=="Equation solver"):
-    st.write("For exact differential equation of the given form")
-    st.latex(r'''\frac{dy}{dx}=Mdx+Ndy''')
-    st.write("Necessary condition is")
-    st.latex(r'''\frac{\partial M}{\partial y}=\frac{\partial N}{\partial x}''')
-    st.markdown("In case of nonexactness, Intergrating factors are used which is F(assuming it to be a function of x only)")
-    st.latex(r'''\frac{dF}{Fdx}=\frac{\frac{\partial M}{\partial y}-\frac{\partial N}{\partial x}}{N}''')
-    st.write("And for I.F. to be a function of y only")
-    st.latex(r'''\frac{dF}{Fdx}=\frac{\frac{\partial M}{\partial y}-\frac{\partial N}{\partial x}}{-M}''')
-    st.write("Some important shortcut formulae to remember")
-    st.latex(r'''1.)d(xy)=xdy+ydx''')
-    st.latex(r'''2.)d(\frac{x}{y})=\frac{ydx-xdy}{y^2}''')
-    st.latex(r'''3.)d(x^2+y^2)=2ydy+2xdx''')
-    st.latex(r'''4.)d(\log(\frac{x}{y}))=\frac{ydx-xdy}{xy}''')
-    st.latex(r'''5.)d(\arctan(\frac{x}{y}))=\frac{ydx-xdy}{x^2+y^2}''')
-    st.write("Linear Differential equations are of following form")
-    st.latex(r'''\frac{dy}{dx}+yP(x)=Q(x)''')
-    st.write("And their solution is given by following formula")
-    st.latex(r'''y\int e^{\int P(x)dx}dx=\int Q(x) e^{\int P(x)dx}dx''')
-    st.latex(r'''\text{Here } e^{\int P(x)dx} \text{ is called integrating factor}''')
-    st.write("Bernoulli Equation is special kind of LDE and is of following form")
-    st.latex(r'''\frac{dy}{dx}+yP(x)=Q(x)y^{n}''')
-    st.write("For solving just divide the equation by coeffiecient of Q(x) and make an appropriate substitution")
-    st.write("Cases are possible where reduction of orrder for a 2nd order ODE is possile if one of the independent or dependent variable is missing")
-    st.latex(r'''\text{a.) If x is missing } \frac{dy}{dx}=P \text{ and } \frac{d^{2}y}{dx^{2}}=P\frac{dP}{dy}''')
-    st.latex(r'''\text{b.) If y is missing } \frac{dy}{dx}=P \text{ and } \frac{d^{2}y}{dx^{2}}=\frac{dP}{dx}''')
-    st.write("2nd Order Differential equations are of following form")
-    st.latex(r''' y''+P(x)y'+Q(x)y=R(x) ''')   
-    st.write("When R(x)=0, its called homogeneous equation")
-    st.latex(r'''\text{For 2nd order homogeneous ODE with constant coefficients we form an auxillary equation such that if } y''+py'+qy=0 \text{ is the ODE then auxillary equation is } m^2+pm+q=0''')
-    st.latex(r'''\text{If 1.) The roots are real and } m_1,m_2 \text{ then solution is } c_1e^{m_1x}+c_2e^{m_2x}''')
-    st.latex(r'''\text{If 2.) The roots are real and equal then solution is } (c_1+c_2x)e^{mx}''')
-    st.latex(r'''\text{If 3.) The roots are complex and } m_1=a+ib,m_2=a-ib \text{ then solution is } e^{ax}(c_1 \cos (bx)+c_2 \sin (bx))''')
-    st.latex(r'''\text{Theorem 1:If } y_1 \text{ is a particular solution of non homomgeneous equation and } y_2 \text{ is the general solution of homogeneous solution then } y=y_1+y_2 \text{ is the general solution of the differential equation}''')
-    st.latex(r'''\text{Theorem 2:If }y_1,y_2 \text{ are 2 particular linearly independent solutions of 2nd order Linear Homogeneous ODE then }cy_1+dy_2 \text{ is its general solution where c and d are arbitrary constants.}''')
-    st.latex(r'''\text{Wronskian is defined as } W(y_1,y_2)=\begin{vmatrix}
-   y_1 & y_1' \\
-   y_2 & y_2'
-\end{vmatrix}''')
-    st.latex(r'''\text{Wronskian Theorem:}W(y_1,y_2) \text{ is either identically 0(Linearly dependent) or never 0(Linearly independent) for a pair} y_1,y_2 \text{ which are solutions(Non-trivial) of 2nd order Linear homogeneous ODE provided P(x) and Q(x) are continous in the interval where the solutions are given.}''')
-    st.write("For linear independent solution of 2nd order Linear Homogeneous ODE , we can multiply solution y with v(x) such that")
-    st.latex(r'''v=\int \frac{1}{y^2} e^{\int -Pdx} dx''')
-    st.write("**Section 17**")
-    st.latex(r'''\text{If } y''+P(x)y'+Q(x)y=0 \text{ is our differential equation under consideration and iff } (Q'+2PQ)/Q^{3/2}=c \text{ then equation can be solved using independent variable as } z=\int Q(x)^{1/2} dx''')
-    st.write("**Method of undetermined coefficients**")
-    st.latex(r'''\text{For solving equation of type } y''+P(x)y'+Q(x)y=R(x) \text{ where R(x) is of form } e^{ax},Asin(x)+Bcos(x) \text{ and } a_0+a_1x+a_{2}x^2+....''')
-    st.latex(r'''\text{The solution is of form:} xR(x) \text{ or } x^2R(x) \text{ with undetermined coefficients } A_n''')
-    st.write("**Method of variation of parameters**")
-    st.write("For finding particular solutions of 2nd order ODE,we use this method")
-    st.latex(r'''\text{If } y_1,y_2 \text{ are general solution of the homogeneous form of our ODE then we multiply them by } v_1=-\int \frac{y_1R(x)}{W(y_1,y_2)} \text{ and } v_2=\int \frac{y_2R(x)}{W(y_1,y_2)} \Rightarrow y_p=v_1y_1+v_2y_2''')
-    st.latex(r'''\text{If R(x) happens to be a sum or difference of either of the three forms then we can separately find solutions for each case and add or subtract according to the question=>Superposition principle is applied)}''')
-    st.write("**Operator method**")
-    st.latex(r'''\text{Any differential equation can be written in operator form where D=} \frac{d}{dx} \Rightarrow \frac{dy}{dx}+r(x)y=l(x)<=>(D-r)y=l(x) \Rightarrow \frac{l(x)}{D-r}=e^{rx} \int e^{-rx}l(x)dx=y''')
-    st.write("**Some special notes**")
-    st.latex(r'''\text{Bessel's equation:} x^{2}y''+xy'+(x^2-p^2)y=0''')
-    st.image("https://www.accessengineeringlibrary.com/binary/mheaeworks/1d6532c8b2902e63/5de03eb02a7bc0927cc4bf3ce6e28730f07ecd096d58d72d67963522a643660c/p2001b2afg4630007vpp.png")
-    st.latex(r'''\text{Normal form of Bessel's equation:} u''+(1+\frac{1-4p^2}{4x^2})u=0''')
-    st.write("**Sturm separation theorem**")
-    st.latex(r'''\text{If } y''+u(x)y=0,z''+w(x)z=0 \text{ are two differential equations such that } u(x)>w(x) \forall x\in R \text{ then y has atleast one zero between two consectutive zeros of z}''')
-    st.latex(r'''\text{Commonly comparison is made with } y''+ty=0 \text{,where t is constant, which has solutions } \sin{\sqrt{t}},\cos{\sqrt{t}}''')
-    st.write("**Power series solutions of Differential equations**")
-    st.write("Works on assumption that the solution of the differential equation is a power series which has a real radius of convergence")
-    st.write("Some common steps")
-    st.latex(r'''y=\sum_{n=0}^{\infin} a_nx^n''')
-    st.latex(r'''y'=\sum_{n=1}^{\infin} na_nx^{n-1}''')
-    st.latex(r'''{y''=\sum_{n=2}^{\infin} n(n-1)a_nx^{n-2}}''')
-    st.latex(r'''\Darr''')
-    st.latex(r'''\text{A recursive relation in the coefficients is obtained}''')
-    st.write("**Singular points**")
-    st.latex(r'''\text{x=a is a regular singular point if either P(x) or Q(x) or both are non-analytic at x=a but xP(x) and } x^2Q(x) \text{ is analytic at x=a}''')
-    st.write("**Frobenius solution of differential equation**")
-    st.latex(r'''\text{Solution is of form } y=x^{m}\sum_{n=0}^{\infin} a_nx^n \text{ and is applicable if point of power series expansion is a regular singular point}''')
-    st.write("Upon differentiation of the series,we have to equate the lowest coefficients to zero and we get the indicial equation")
-    st.latex(r'''\text{Indicial equation:} m(m-1)+p_0m+q_0=0 \text{ where } xP(x)=p_0+p_1x+p_2x^2+...,x^2Q(x)=q_0+q_1x+q_2x^2+..''')
-    st.write("**Gauss Hypergeometric equation**")
-    st.latex(r'''x(1-x)y''+[c-(a+b+1)]x-aby=0 \text{ is the standard form of hypergeometric equation where 0 and 1-c are the roots of indicial equation}''')
-    st.latex(r'''\text{Its solution if } c \not = 0 \text{ or } \notin Z \text{ is expressed in form:} F(a,b,c,x)=1+\sum_{n=1}^{\infty} \frac{a(a+1)(a+2)...(a+n-1)(b)(b+1)...(b+n-1)}{n!c(c+1)...(c+n-1)}''')
-    st.latex(r'''\text{Its solution if } 1-c \notin Z \text{ is expressed in form:} x^{1-c}F(a-c+1,b-c+1,2-c,x)''')
-    st.latex(r'''\text{Its solution near x=1 is given by } t=1-x \Rarr t(1-t)y''+[(a+b-c+1)-(a+b+1)t]y'-aby=0 \Rarr y=F(a,b,a+b-c+1,x) \text{ and corresponding transformation for 1-c part}''')
-    st.write("**Most General form**")
-    st.latex(r'''\text{Transform } t=\frac{x-A}{B-A} \text{ if equation is of form } (x-A)(x-B)y''+(C+Dx)y'+Ey=0''')
+    if (file1 is not None) and (len(k) >= 2):
+        k1 = k[0].shape
+        k12 = k[1].shape
+        st.write("shapes are ", str(k1), "and", str(k12))
+        if (k1 != k12):
+            h, w, c = k[0].shape
+            k[1] = cv.resize(k[1], (w, h))
+            k13 = k[0].shape
+            k14 = k[1].shape
+            st.write("shapes are ", str(k13), "and", str(k14))
+            o = st.number_input("Choose a number between 1 and 0")
+            dst = cv.addWeighted(k[1], o, k[0], 1-o, 0)
+            st.image(dst, channels='BGR')
+elif(option=="ROI"):
+    file1 = st.file_uploader("Select the files in  such a way that second file is watermark file", type=[
+                             "jpg", 'png'], accept_multiple_files=True)
+    for uploaded_file in file1:
+        file_bytes = np.asarray(
+            bytearray(uploaded_file.read()), dtype=np.uint8)
+        def ROI():
+            opencv_image = cv.imdecode(file_bytes, 1)
+            st.image(opencv_image,channels="BGR")
+            opencv_image=cv.resize(opencv_image,(800,600))
+            r = cv.selectROI(opencv_image)
+            imCrop = opencv_image[int(r[1]):int(r[1]+r[3]), int(r[0]):int(r[0]+r[2])]
+            opt = st.selectbox("Select the process option", ("Thresholding",
+                               "Gradient", "Morphological transform", "Blur", "Edges"))
+            if (opt == "Edges"):
+                j1 = st.slider("Select dim1", min_value=0, max_value=1000)
+                j2 = st.slider("Select dim2", min_value=0, max_value=1000)
+                m = funct.edges(imCrop, j1, j2)
+                opencv_image=cv.cvtColor(opencv_image,cv.COLOR_BGR2GRAY)
+                opencv_image[int(r[1]):int(r[1]+r[3]), int(r[0]):int(r[0]+r[2])]=m
+                m=opencv_image
+                st.image(m)
+            elif (opt == "Thresholding"):
+                k2 = st.selectbox("Select threshold object",
+                                  ("Global", "Adaptive"))
+                k3 = st.slider("Select Ad1", min_value=1,
+                               max_value=127, step=2)
+                k4 = st.slider("Select Ad2", min_value=1,
+                               max_value=255, step=2)
+                k5 = st.slider("Select Ad3", min_value=1, max_value=10)
+                if (k2 == "Global"):
+                    m, m1, m2, m3, m4 = funct.threshold(
+                        imCrop, option=k2, adv1=k3, adv2=(k4), adv3=(k5))
+                    op=cv.cvtColor(opencv_image, cv.COLOR_BGR2GRAY)
+                    op1=cv.cvtColor(opencv_image, cv.COLOR_BGR2GRAY)
+                    op2=cv.cvtColor(opencv_image, cv.COLOR_BGR2GRAY)
+                    op3=cv.cvtColor(opencv_image, cv.COLOR_BGR2GRAY)
+                    op4=cv.cvtColor(opencv_image, cv.COLOR_BGR2GRAY)
+                    op[int(r[1]):int(r[1]+r[3]), int(r[0]):int(r[0]+r[2])]=m
+                    m=op
+                    st.image(cv.resize(m,(3000,4000)), caption="Binary thresh")
+                    op1[int(r[1]):int(r[1]+r[3]), int(r[0]):int(r[0]+r[2])]=m1
+                    m1=op1
+                    st.image(cv.resize(m1,(3000,4000)), caption="Inverse binary")
+                    op2[int(r[1]):int(r[1]+r[3]), int(r[0]):int(r[0]+r[2])]=m2
+                    m2=op2
+                    st.image(cv.resize(m2,(3000,4000)), caption="Truncated")
+                    op3[int(r[1]):int(r[1]+r[3]), int(r[0]):int(r[0]+r[2])]=m3
+                    m3=op3
+                    st.image(cv.resize(m3,(3000,4000)), caption="To zero")
+                    op4[int(r[1]):int(r[1]+r[3]), int(r[0]):int(r[0]+r[2])]=m4
+                    m4=op4
+                    st.image(cv.resize(m4,(3000,4000)), caption="Inverse zero")
+                else:
+                    m, m1 = funct.threshold(
+                        imCrop, adv1=k3, adv2=(k4), adv3=(k5))
+                    op=cv.cvtColor(opencv_image, cv.COLOR_BGR2GRAY)
+                    op1=cv.cvtColor(opencv_image, cv.COLOR_BGR2GRAY)
+                    op[int(r[1]):int(r[1]+r[3]), int(r[0]):int(r[0]+r[2])]=m
+                    m=op
+                    st.image(cv.resize(m,(3000,4000)), caption="Mean Adaptive thresh")
+                    op1[int(r[1]):int(r[1]+r[3]), int(r[0]):int(r[0]+r[2])]=m1
+                    m1=op1
+                    st.image(cv.resize(m1,(3000,4000)), caption="Gaussian Adaptive thresh")
+            elif (opt == "Morphological transform"):
+                j1 = st.slider("Select dimension of kernel",
+                               min_value=1, max_value=500)
+                j2 = st.slider("Select denominator",
+                               min_value=1, max_value=256)
+                j3 = st.slider("Select value", min_value=0, max_value=80)
+                j4 = st.selectbox("Select the option", ("2D FIlt", "erosion", "dilation",
+                                  "open morph", "close morph", "morph grad", "topht", "Black"))
+                j8 = funct.morph(imCrop, j1, j2, j3, j4)
+                opencv_image[int(r[1]):int(r[1]+r[3]), int(r[0]):int(r[0]+r[2])]=j8
+                j8=opencv_image
+                st.image(cv.resize(j8,(3000,4000)), caption=j4, channels="BGR")
+            elif (opt == "Gradient"):
+                opt89 = st.selectbox(
+                    "Select the option", ("Laplacian", "Sobelx", "sobely", "combo"))
+                c = st.slider("Select ksize", min_value=1,
+                              max_value=31, step=2)
+                if (opt89 == "combo"):
+                    s1, s2, s3 = funct.gradient(imCrop, c=c)
+                    op1=opencv_image
+                    op2=opencv_image
+                    op3=opencv_image
+                    op1[int(r[1]):int(r[1]+r[3]), int(r[0]):int(r[0]+r[2])]=s1
+                    st.image(cv.resize(op1,(3000,4000)), clamp=True)
+                    op2[int(r[1]):int(r[1]+r[3]), int(r[0]):int(r[0]+r[2])]=s2
+                    st.image(cv.resize(op2,(3000,4000)), clamp=True)
+                    op3[int(r[1]):int(r[1]+r[3]), int(r[0]):int(r[0]+r[2])]=s3
+                    st.image(cv.resize(op3,(3000,4000)), clamp=True)
+                    m = st.selectbox(
+                        "Select Color", ("HSV", "RGB CIE", "XYZ", "YUV", "YIQ", "YPbPr", "YCbCr", "YDbDr"))
+                    l = convert_colorspace(op1, "RGB", m)
+                    st.image(cv.resize(l,(3000,4000)), clamp=True)
+                    l1 = convert_colorspace(op2, "RGB", m)
+                    st.image(cv.resize(l1,(3000,4000)), clamp=True)
+                    l2 = convert_colorspace(op3, "RGB", m)
+                    st.image(cv.resize(l2,(3000,4000)), clamp=True)
+                else:
+                    s12 = funct.gradient(imCrop, option=opt89, c=c)
+                    opencv_image[int(r[1]):int(r[1]+r[3]), int(r[0]):int(r[0]+r[2])]=s12
+                    st.image(cv.resize(opencv_image,(3000,4000)), caption=opt89, clamp=True)
+                    m = st.selectbox(
+                        "Select Color", ("HSV", "RGB CIE", "XYZ", "YUV", "YIQ", "YPbPr", "YCbCr", "YDbDr"))
+
+                    l = convert_colorspace(opencv_image, "RGB", m)
+                    st.image(cv.resize(l,(3000,4000)), clamp=True)
+            else:
+                s1 = st.selectbox(
+                    'Option choose', ("Median Blur", "Gaussian blur", "Bilateral", 'blur'))
+                s2 = st.slider("Select A", min_value=1, max_value=301, step=2)
+                s3 = st.slider("select B", min_value=1, max_value=301, step=2)
+                s4 = st.slider("select C", min_value=1, max_value=301, step=2)
+                yt = funct.blur(imCrop, s1, s2, s3, s4)
+                opencv_image[int(r[1]):int(r[1]+r[3]), int(r[0]):int(r[0]+r[2])]=yt
+                st.image(cv.resize(opencv_image,(3000,4000)), caption=s1, channels="BGR")
+                m = st.selectbox("Select Color", ("HSV", "RGB CIE",
+                                 "XYZ", "YUV", "YIQ", "YPbPr", "YCbCr", "YDbDr"))
+                l = convert_colorspace(yt, "RGB", m)
+                st.image(l, clamp=True)
+            cv.waitKey(0)
+            cv.destroyAllWindows()
+        ROI()
+elif(option == "Neural Networks"):
+    f1 = st.file_uploader("Select your files", type=["jpg", 'png', "jpeg"],accept_multiple_files=True)
+    dirw=st.text_input("enter the directory path")
+    try:
+        if f1 is not None:
+            if len(f1)>0:
+                lo=st.slider("Choose file",min_value=0,max_value=len(f1))
+            uploaded_file=f1[lo]
+            bytes_data = uploaded_file.read()
+            st.write("filename:", uploaded_file.name)
+            #st.write(bytes_data)
+            #file_bytes = np.asarray(bytearray(f1.read()), dtype=np.uint8)
+            Mk=work.datasetmaker(uploaded_file.name)
+            st.image((Mk[0]).permute(1,2,0).numpy())
+            ch1=st.selectbox("Choose type", options=("Int","Tuple"))
+            ch2=st.selectbox("Choose layer",options=("Conv2d","LazyConv2D","Maxpool2d","Avgpool2d","LLPool2d","ReplicationPad","ReflectionPad","Sequence"))
+            if ch1=="Tuple":
+                        if ch2=="Conv2d":
+                            kernel_size1 = st.slider("Select kernel size1", min_value=1,
+                               max_value=999, step=1)
+                            stride1 = st.slider("Select stride1", min_value=1,
+                               max_value=999, step=1)
+                            padding1 = st.slider("Select padding1", min_value=0, max_value=100)
+                            kernel_size2 = st.slider("Select kernel size2", min_value=1,
+                               max_value=127, step=1)
+                            stride2 = st.slider("Select stride2", min_value=1,
+                               max_value=255, step=1)
+                            padding2 = st.slider("Select padding2", min_value=1, max_value=100)
+                            m=nn.Conv2d(3, 3, kernel_size=(kernel_size1,kernel_size2), stride=(stride1,stride2), padding=(padding1,padding2), dilation=1, groups=1, bias=True, padding_mode='zeros', device=None, dtype=None)
+                            k=(m(Mk).detach().numpy())[0]
+                            #k=work.image(k)
+                            st.image(work.image(k),clamp=True,channels="BGR")
+                        elif ch2=="LLPool2d":
+                            kernel_size1 = st.slider("Select kernel size1", min_value=1,
+                               max_value=999, step=1)
+                            stride1 = st.slider("Select stride1", min_value=1,
+                               max_value=999, step=1)
+                            kernel_size2 = st.slider("Select kernel size2", min_value=1,
+                               max_value=127, step=1)
+                            stride2 = st.slider("Select stride2", min_value=1,
+                               max_value=255, step=1)
+                            m=nn.LPPool2d(kernel_size=(kernel_size1,kernel_size2), stride=(stride1,stride2), ceil_mode=False)
+                            k=(m(Mk).detach().numpy())[0]
+                            st.image(work.image(k),clamp=True,channels="BGR")
+                        elif ch2=="Maxpool2d":
+                            kernel_size1 = st.slider("Select kernel size1", min_value=1,
+                               max_value=999, step=1)
+                            stride1 = st.slider("Select stride1", min_value=1,
+                               max_value=999, step=1)
+                            padding1 = st.slider("Select padding1", min_value=0, max_value=100)
+                            kernel_size2 = st.slider("Select kernel size2", min_value=1,
+                               max_value=127, step=1)
+                            stride2 = st.slider("Select stride2", min_value=1,
+                               max_value=255, step=1)
+                            padding2 = st.slider("Select padding2", min_value=1, max_value=100)
+                            m=nn.MaxPool2d( kernel_size=(kernel_size1,kernel_size2), stride=(stride1,stride2), padding=(padding1,padding2), dilation=1)
+                            k=(m(Mk).detach().numpy())[0]
+                            st.image(work.image(k),clamp=True,channels="BGR")
+                        elif ch2=="Avgpool2d":
+                            kernel_size1 = st.slider("Select kernel size1", min_value=1,
+                               max_value=999, step=1)
+                            stride1 = st.slider("Select stride1", min_value=1,
+                               max_value=999, step=1)
+                            padding1 = st.slider("Select padding1", min_value=0, max_value=100)
+                            kernel_size2 = st.slider("Select kernel size2", min_value=1,
+                               max_value=127, step=1)
+                            stride2 = st.slider("Select stride2", min_value=1,
+                               max_value=255, step=1)
+                            padding2 = st.slider("Select padding2", min_value=1, max_value=100)
+                            m=nn.AvgPool2d(kernel_size=(kernel_size1,kernel_size2), stride=(stride1,stride2), padding=(padding1,padding2), ceil_mode=False, count_include_pad=True, divisor_override=None)
+                            k=(m(Mk).detach().numpy())[0]
+                            st.image(work.image(k),clamp=True,channels="BGR")
+                        elif ch2=="ReplicationPad":
+                            padding1=st.slider("Select padding1",min_value=1, max_value=10000)
+                            padding2=st.slider("Select padding2",min_value=1, max_value=10000)
+                            padding3=st.slider("Select padding3",min_value=1, max_value=10000)
+                            padding4=st.slider("Select padding4",min_value=1, max_value=10000)
+                            m=nn.ReplicationPad2d((padding1,padding2,padding3,padding4))
+                            k=(m(Mk).detach().numpy())[0]
+                            st.image(work.image(k),clamp=True,channels="BGR")
+                        elif ch2=="ReflectionPad":
+                            padding1=st.slider("Select padding1",min_value=1, max_value=1000)
+                            padding2=st.slider("Select padding2",min_value=1, max_value=1000)
+                            padding3=st.slider("Select padding3",min_value=1, max_value=1000)
+                            padding4=st.slider("Select padding4",min_value=1, max_value=1000)
+                            m=nn.ReflectionPad2d((padding1,padding2,padding3,padding4))
+                            k=(m(Mk).detach().numpy())[0]
+                            st.image(work.image(k),clamp=True,channels="BGR")
+                        elif ch2=="Sequence":
+                            num=st.number_input("Enter number of layers",min_value=1)
+                            layers=[]
+                            for i in range(num):
+                                st.write("Choose"+str(i)+"layer")
+                                ch2=st.selectbox("Choose layer",options=("Conv2d","LazyConv2D","Maxpool2d","Avgpool2d","LLPool2d","ReplicationPad","ReflectionPad"))
+                                if ch2=="Conv2d":
+                                    kernel_size1 = st.slider("Select kernel size1", min_value=1,
+                                       max_value=999, step=1)
+                                    stride1 = st.slider("Select stride1", min_value=1,
+                                       max_value=999, step=1)
+                                    padding1 = st.slider("Select padding1", min_value=0, max_value=100)
+                                    kernel_size2 = st.slider("Select kernel size2", min_value=1,
+                                       max_value=127, step=1)
+                                    stride2 = st.slider("Select stride2", min_value=1,
+                                       max_value=255, step=1)
+                                    padding2 = st.slider("Select padding2", min_value=1, max_value=100)
+                                    m=nn.Conv2d(3, 3, kernel_size=(kernel_size1,kernel_size2), stride=(stride1,stride2), padding=(padding1,padding2), dilation=1, groups=1, bias=True, padding_mode='zeros', device=None, dtype=None)
+                                    layers.append(m)
+                                elif ch2=="LLPool2d":
+                                    kernel_size1 = st.slider("Select kernel size1", min_value=1,
+                                       max_value=999, step=1)
+                                    stride1 = st.slider("Select stride1", min_value=1,
+                                       max_value=999, step=1)
+                                    kernel_size2 = st.slider("Select kernel size2", min_value=1,
+                                       max_value=127, step=1)
+                                    stride2 = st.slider("Select stride2", min_value=1,
+                                       max_value=255, step=1)
+                                    m=nn.LPPool2d(kernel_size=(kernel_size1,kernel_size2), stride=(stride1,stride2), ceil_mode=False)
+                                    layers.append(m)
+                                elif ch2=="Maxpool2d":
+                                    kernel_size1 = st.slider("Select kernel size1", min_value=1,
+                                       max_value=999, step=1)
+                                    stride1 = st.slider("Select stride1", min_value=1,
+                                       max_value=999, step=1)
+                                    padding1 = st.slider("Select padding1", min_value=0, max_value=100)
+                                    kernel_size2 = st.slider("Select kernel size2", min_value=1,
+                                       max_value=127, step=1)
+                                    stride2 = st.slider("Select stride2", min_value=1,
+                                       max_value=255, step=1)
+                                    padding2 = st.slider("Select padding2", min_value=1, max_value=100)
+                                    m=nn.MaxPool2d( kernel_size=(kernel_size1,kernel_size2), stride=(stride1,stride2), padding=(padding1,padding2), dilation=1)
+                                    layers.append(m)
+                                elif ch2=="Avgpool2d":
+                                    kernel_size1 = st.slider("Select kernel size1", min_value=1,
+                                       max_value=999, step=1)
+                                    stride1 = st.slider("Select stride1", min_value=1,
+                                       max_value=999, step=1)
+                                    padding1 = st.slider("Select padding1", min_value=0, max_value=100)
+                                    kernel_size2 = st.slider("Select kernel size2", min_value=1,
+                                       max_value=127, step=1)
+                                    stride2 = st.slider("Select stride2", min_value=1,
+                                       max_value=255, step=1)
+                                    padding2 = st.slider("Select padding2", min_value=1, max_value=100)
+                                    m=nn.AvgPool2d(kernel_size=(kernel_size1,kernel_size2), stride=(stride1,stride2), padding=(padding1,padding2), ceil_mode=False, count_include_pad=True, divisor_override=None)
+                                    layers.append(m)
+                                elif ch2=="ReplicationPad":
+                                    padding1=st.slider("Select padding1",min_value=1, max_value=100)
+                                    padding2=st.slider("Select padding2",min_value=1, max_value=100)
+                                    padding3=st.slider("Select padding3",min_value=1, max_value=100)
+                                    padding4=st.slider("Select padding4",min_value=1, max_value=100)
+                                    m=nn.ReplicationPad2d((padding1,padding2,padding3,padding4))
+                                    layers.append(m)
+                                elif ch2=="ReflectionPad":
+                                    padding1=st.slider("Select padding1",min_value=1, max_value=1000)
+                                    padding2=st.slider("Select padding2",min_value=1, max_value=1000)
+                                    padding3=st.slider("Select padding3",min_value=1, max_value=1000)
+                                    padding4=st.slider("Select padding4",min_value=1, max_value=1000)
+                                    m=nn.ReflectionPad2d((padding1,padding2,padding3,padding4))
+                                    layers.append(m)
+                                else:
+                                    m=nn.LazyConv2d(3, kernel_size=(kernel_size1,kernel_size2), stride=(stride1,stride2), padding=(padding1,padding2), dilation=1, groups=1, bias=True, padding_mode='zeros', device=None, dtype=None)
+                                    layers.append(m)
+                                seq=nn.Sequential(*layers)
+                                k=(seq(Mk).detach().numpy())[0]
+                                st.image(work.image(k),clamp=True,channels="BGR")
+                        else:
+                            m=nn.LazyConv2d(3, kernel_size=(kernel_size1,kernel_size2), stride=(stride1,stride2), padding=(padding1,padding2), dilation=1, groups=1, bias=True, padding_mode='zeros', device=None, dtype=None)
+                            k=(m(Mk).detach().numpy())[0]
+                            st.image(work.image(k),clamp=True,channels="BGR")
+            else:
+                if ch2=="Conv2d":
+                            kernel_size = st.slider("Select kernel size", min_value=1,
+                                   max_value=100, step=1)
+                            stride = st.slider("Select stride", min_value=1,
+                                   max_value=100, step=1)
+                            padding = st.slider("Select padding", min_value=0, max_value=100)
+                            dilation=st.slider("Select Dilation",min_value=1, max_value=100)
+                            groups=st.slider("Select Groups(not useful in pooling layers)",min_value=1, max_value=999)
+                            m=nn.Conv2d(3, 3, kernel_size=kernel_size, stride=stride, padding=padding, dilation=1, groups=1, bias=True, padding_mode='zeros', device=None, dtype=None)
+                            k=(m(Mk).detach().numpy())[0]
+                            k=work.image(k)
+                            st.image(k,clamp=True,channels="BGR")
+                elif ch2=="Avgpool2d":
+                            kernel_size = st.slider("Select kernel size", min_value=1,
+                                   max_value=100, step=1)
+                            stride = st.slider("Select stride", min_value=1,
+                                   max_value=100, step=1)
+                            padding = st.slider("Select padding", min_value=0, max_value=100)
+                            m=nn.AvgPool2d(kernel_size,stride, padding, ceil_mode=False, count_include_pad=True, divisor_override=None)
+                            k=(m(Mk).detach().numpy())[0]
+                            st.image(work.image(k),clamp=True,channels="BGR")
+                elif ch2=="Maxpool2d":
+                            kernel_size = st.slider("Select kernel size", min_value=1,
+                                   max_value=100, step=1)
+                            stride = st.slider("Select stride", min_value=1,
+                                   max_value=100, step=1)
+                            padding = st.slider("Select padding", min_value=0, max_value=100)
+                            m=nn.MaxPool2d(kernel_size, stride, padding, dilation=1)
+                            k=(m(Mk).detach().numpy())[0]
+                            st.image(work.image(k),clamp=True,channels="BGR")
+                elif ch2=="ReplicationPad":
+                    padding=st.slider("Select padding",min_value=1, max_value=1000)
+                    m=nn.ReplicationPad2d(padding)
+                    k=(m(Mk).detach().numpy())[0]
+                    st.image(work.image(k),clamp=True,channels="BGR")
+                elif ch2=="ReflectionPad":
+                    padding=st.slider("Select padding",min_value=1, max_value=1000)
+                    m=nn.ReflectionPad2d(padding)
+                    k=(m(Mk).detach().numpy())[0]
+                    st.image(work.image(k),clamp=True,channels="BGR")
+                elif ch2=="LLPool2d":
+                            norm_type=st.number_input("Enter norm",0,10)
+                            kernel_size = st.slider("Select kernel size", min_value=1,
+                                   max_value=100, step=1)
+                            stride = st.slider("Select stride", min_value=1,
+                                   max_value=100, step=1)
+                            padding = st.slider("Select padding", min_value=0, max_value=100)
+                            m=nn.LPPool2d(norm_type,kernel_size, stride, ceil_mode=False)
+                            k=(m(Mk).detach().numpy())[0]
+                            st.image(work.image(k),clamp=True,channels="BGR")
+                elif ch2=="Sequence":
+                            layer1=[]
+                            layer2=[]
+                            ch2=st.selectbox("Choose 1st layer",options=("Conv2d","LazyConv2D","Maxpool2d","Avgpool2d","LLPool2d","ReplicationPad","ReflectionPad"))
+                            if ch2=="Conv2d":
+                                        kernel_size = st.slider("Select kernel size", min_value=1,
+                                               max_value=100, step=1)
+                                        stride = st.slider("Select stride", min_value=1,
+                                               max_value=100, step=1)
+                                        padding = st.slider("Select padding", min_value=0, max_value=100)
+                                        dilation=st.slider("Select Dilation",min_value=1, max_value=100)
+                                        groups=st.slider("Select Groups(not useful in pooling layers)",min_value=1, max_value=999)
+                                        m=nn.Conv2d(3, 3, kernel_size=kernel_size, stride=stride, padding=padding, dilation=1, groups=1, bias=True, padding_mode='zeros', device=None, dtype=None)
+                                        layer1=m
+                                        ch3=st.selectbox("Choose 2nd layer",options=("Conv2d","LazyConv2D","Maxpool2d","Avgpool2d","LLPool2d","ReplicationPad","ReflectionPad"))
+                                        if ch3=="Conv2d":
+                                                    kernel_size = st.slider("Select kernel size", min_value=1,
+                                                           max_value=100, step=1)
+                                                    stride = st.slider("Select stride", min_value=1,
+                                                           max_value=100, step=1)
+                                                    padding = st.slider("Select padding", min_value=0, max_value=100)
+                                                    dilation=st.slider("Select Dilation",min_value=1, max_value=100)
+                                                    groups=st.slider("Select Groups(not useful in pooling layers)",min_value=1, max_value=999)
+                                                    m=nn.Conv2d(3, 3, kernel_size=kernel_size, stride=stride, padding=padding, dilation=1, groups=1, bias=True, padding_mode='zeros', device=None, dtype=None)
+                                                    layer2=m
+                                        elif ch3=="Avgpool2d":
+                                                    kernel_size = st.slider("Select kernel size", min_value=1,
+                                                           max_value=100, step=1)
+                                                    stride = st.slider("Select stride", min_value=1,
+                                                           max_value=100, step=1)
+                                                    padding = st.slider("Select padding", min_value=0, max_value=100)
+                                                    m=nn.AvgPool2d(kernel_size,stride, padding, ceil_mode=False, count_include_pad=True, divisor_override=None)
+                                                    layer2=m
+                                        elif ch3=="Maxpool2d":
+                                                    kernel_size = st.slider("Select kernel size", min_value=1,
+                                                           max_value=100, step=1)
+                                                    stride = st.slider("Select stride", min_value=1,
+                                                           max_value=100, step=1)
+                                                    padding = st.slider("Select padding", min_value=0, max_value=100)
+                                                    m=nn.MaxPool2d(kernel_size, stride, padding, dilation=1)
+                                                    layer2=m
+                                        elif ch3=="ReplicationPad":
+                                            padding=st.slider("Select padding",min_value=1, max_value=1000)
+                                            m=nn.ReplicationPad2d(padding)
+                                            layer2=m
+                                        elif ch3=="ReflectionPad":
+                                            padding=st.slider("Select padding",min_value=1, max_value=1000)
+                                            m=nn.ReflectionPad2d(padding)
+                                            layer2=m
+                                        elif ch3=="LLPool2d":
+                                                    norm_type=st.number_input("Enter norm",0,10)
+                                                    kernel_size = st.slider("Select kernel size", min_value=1,
+                                                           max_value=100, step=1)
+                                                    stride = st.slider("Select stride", min_value=1,
+                                                           max_value=100, step=1)
+                                                    padding = st.slider("Select padding", min_value=0, max_value=100)
+                                                    m=nn.LPPool2d(norm_type,kernel_size, stride, ceil_mode=False)
+                                                    layer2=m
+                                        else:
+                                                kernel_size = st.slider("Select kernel size", min_value=1,
+                                                           max_value=100, step=1)
+                                                stride = st.slider("Select stride", min_value=1,
+                                                           max_value=100, step=1)
+                                                padding = st.slider("Select padding", min_value=0, max_value=100)
+                                                m=nn.LazyConv2d(3,kernel_size=kernel_size, stride=stride, padding=padding, dilation=1, groups=1, bias=True, padding_mode='zeros', device=None, dtype=None)
+                                                layer2=m
+                                        t=nn.Sequential(layer1,layer2)
+                                        k=(t(Mk).detach().numpy())[0]
+                                        st.image(work.image(k),clamp=True,channels="BGR")
+                            elif ch2=="Avgpool2d":
+                                        kernel_size = st.slider("Select kernel size", min_value=1,
+                                               max_value=100, step=1)
+                                        stride = st.slider("Select stride", min_value=1,
+                                               max_value=100, step=1)
+                                        padding = st.slider("Select padding", min_value=0, max_value=100)
+                                        m=nn.AvgPool2d(kernel_size,stride, padding, ceil_mode=False, count_include_pad=True, divisor_override=None)
+                                        layer1=m
+                                        ch3=st.selectbox("Choose 2nd layer",options=("Conv2d","LazyConv2D","Maxpool2d","Avgpool2d","LLPool2d","ReplicationPad","ReflectionPad"))
+                                        if ch3=="Conv2d":
+                                                    kernel_size = st.slider("Select kernel size", min_value=1,
+                                                           max_value=100, step=1)
+                                                    stride = st.slider("Select stride", min_value=1,
+                                                           max_value=100, step=1)
+                                                    padding = st.slider("Select padding", min_value=0, max_value=100)
+                                                    dilation=st.slider("Select Dilation",min_value=1, max_value=100)
+                                                    groups=st.slider("Select Groups(not useful in pooling layers)",min_value=1, max_value=999)
+                                                    m=nn.Conv2d(3, 3, kernel_size=kernel_size, stride=stride, padding=padding, dilation=1, groups=1, bias=True, padding_mode='zeros', device=None, dtype=None)
+                                                    layer2=m
+                                        elif ch3=="Avgpool2d":
+                                                    kernel_size = st.slider("Select kernel size", min_value=1,
+                                                           max_value=100, step=1)
+                                                    stride = st.slider("Select stride", min_value=1,
+                                                           max_value=100, step=1)
+                                                    padding = st.slider("Select padding", min_value=0, max_value=100)
+                                                    m=nn.AvgPool2d(kernel_size,stride, padding, ceil_mode=False, count_include_pad=True, divisor_override=None)
+                                                    layer2=m
+                                        elif ch3=="Maxpool2d":
+                                                    kernel_size = st.slider("Select kernel size", min_value=1,
+                                                           max_value=100, step=1)
+                                                    stride = st.slider("Select stride", min_value=1,
+                                                           max_value=100, step=1)
+                                                    padding = st.slider("Select padding", min_value=0, max_value=100)
+                                                    m=nn.MaxPool2d(kernel_size, stride, padding, dilation=1)
+                                                    layer2=m
+                                        elif ch3=="ReplicationPad":
+                                            padding=st.slider("Select padding",min_value=1, max_value=1000)
+                                            m=nn.ReplicationPad2d(padding)
+                                            layer2=m
+                                        elif ch3=="ReflectionPad":
+                                            padding=st.slider("Select padding",min_value=1, max_value=1000)
+                                            m=nn.ReflectionPad2d(padding)
+                                            layer2=m
+                                        elif ch3=="LLPool2d":
+                                                    norm_type=st.number_input("Enter norm",0,10)
+                                                    kernel_size = st.slider("Select kernel size", min_value=1,
+                                                           max_value=100, step=1)
+                                                    stride = st.slider("Select stride", min_value=1,
+                                                           max_value=100, step=1)
+                                                    padding = st.slider("Select padding", min_value=0, max_value=100)
+                                                    m=nn.LPPool2d(norm_type,kernel_size, stride, ceil_mode=False)
+                                                    layer2=m
+                                        else:
+                                                kernel_size = st.slider("Select kernel size", min_value=1,
+                                                           max_value=100, step=1)
+                                                stride = st.slider("Select stride", min_value=1,
+                                                           max_value=100, step=1)
+                                                padding = st.slider("Select padding", min_value=0, max_value=100)
+                                                m=nn.LazyConv2d(3,kernel_size=kernel_size, stride=stride, padding=padding, dilation=1, groups=1, bias=True, padding_mode='zeros', device=None, dtype=None)
+                                                layer2=m
+                                        t=nn.Sequential(layer1,layer2)
+                                        k=(t(Mk).detach().numpy())[0]
+                                        st.image(work.image(k),clamp=True,channels="BGR")
+                            elif ch2=="Maxpool2d":
+                                        kernel_size = st.slider("Select kernel size", min_value=1,
+                                               max_value=100, step=1)
+                                        stride = st.slider("Select stride", min_value=1,
+                                               max_value=100, step=1)
+                                        padding = st.slider("Select padding", min_value=0, max_value=100)
+                                        m=nn.MaxPool2d(kernel_size, stride, padding, dilation=1)
+                                        layer1=m
+                                        ch3=st.selectbox("Choose 2nd layer",options=("Conv2d","LazyConv2D","Maxpool2d","Avgpool2d","LLPool2d","ReplicationPad","ReflectionPad"))
+                                        if ch3=="Conv2d":
+                                                    kernel_size = st.slider("Select kernel size", min_value=1,
+                                                           max_value=100, step=1)
+                                                    stride = st.slider("Select stride", min_value=1,
+                                                           max_value=100, step=1)
+                                                    padding = st.slider("Select padding", min_value=0, max_value=100)
+                                                    dilation=st.slider("Select Dilation",min_value=1, max_value=100)
+                                                    groups=st.slider("Select Groups(not useful in pooling layers)",min_value=1, max_value=999)
+                                                    m=nn.Conv2d(3, 3, kernel_size=kernel_size, stride=stride, padding=padding, dilation=1, groups=1, bias=True, padding_mode='zeros', device=None, dtype=None)
+                                                    layer2=m
+                                        elif ch3=="Avgpool2d":
+                                                    kernel_size = st.slider("Select kernel size", min_value=1,
+                                                           max_value=100, step=1)
+                                                    stride = st.slider("Select stride", min_value=1,
+                                                           max_value=100, step=1)
+                                                    padding = st.slider("Select padding", min_value=0, max_value=100)
+                                                    m=nn.AvgPool2d(kernel_size,stride, padding, ceil_mode=False, count_include_pad=True, divisor_override=None)
+                                                    layer2=m
+                                        elif ch3=="Maxpool2d":
+                                                    kernel_size = st.slider("Select kernel size", min_value=1,
+                                                           max_value=100, step=1)
+                                                    stride = st.slider("Select stride", min_value=1,
+                                                           max_value=100, step=1)
+                                                    padding = st.slider("Select padding", min_value=0, max_value=100)
+                                                    m=nn.MaxPool2d(kernel_size, stride, padding, dilation=1)
+                                                    layer2=m
+                                        elif ch3=="ReplicationPad":
+                                            padding=st.slider("Select padding",min_value=1, max_value=1000)
+                                            m=nn.ReplicationPad2d(padding)
+                                            layer2=m
+                                        elif ch3=="ReflectionPad":
+                                            padding=st.slider("Select padding",min_value=1, max_value=1000)
+                                            m=nn.ReflectionPad2d(padding)
+                                            layer2=m
+                                        elif ch3=="LLPool2d":
+                                                    norm_type=st.number_input("Enter norm",0,10)
+                                                    kernel_size = st.slider("Select kernel size", min_value=1,
+                                                           max_value=100, step=1)
+                                                    stride = st.slider("Select stride", min_value=1,
+                                                           max_value=100, step=1)
+                                                    padding = st.slider("Select padding", min_value=0, max_value=100)
+                                                    m=nn.LPPool2d(norm_type,kernel_size, stride, ceil_mode=False)
+                                                    layer2=m
+                                        else:
+                                                kernel_size = st.slider("Select kernel size", min_value=1,
+                                                           max_value=100, step=1)
+                                                stride = st.slider("Select stride", min_value=1,
+                                                           max_value=100, step=1)
+                                                padding = st.slider("Select padding", min_value=0, max_value=100)
+                                                m=nn.LazyConv2d(3,kernel_size=kernel_size, stride=stride, padding=padding, dilation=1, groups=1, bias=True, padding_mode='zeros', device=None, dtype=None)
+                                                layer2=m
+                                        t=nn.Sequential(layer1,layer2)
+                                        k=(t(Mk).detach().numpy())[0]
+                                        st.image(work.image(k),clamp=True,channels="BGR")
+                            elif ch2=="ReplicationPad":
+                                padding=st.slider("Select padding",min_value=1, max_value=1000)
+                                m=nn.ReplicationPad2d(padding)
+                                layer1=m
+                                ch3=st.selectbox("Choose 2nd layer",options=("Conv2d","LazyConv2D","Maxpool2d","Avgpool2d","LLPool2d","ReplicationPad","ReflectionPad"))
+                                if ch3=="Conv2d":
+                                    kernel_size = st.slider("Select kernel size", min_value=1,
+                                           max_value=100, step=1)
+                                    stride = st.slider("Select stride", min_value=1,
+                                           max_value=100, step=1)
+                                    padding = st.slider("Select padding", min_value=0, max_value=100)
+                                    dilation=st.slider("Select Dilation",min_value=1, max_value=100)
+                                    groups=st.slider("Select Groups(not useful in pooling layers)",min_value=1, max_value=999)
+                                    m=nn.Conv2d(3, 3, kernel_size=kernel_size, stride=stride, padding=padding, dilation=1, groups=1, bias=True, padding_mode='zeros', device=None, dtype=None)
+                                    layer2=m
+                                elif ch3=="Avgpool2d":
+                                            kernel_size = st.slider("Select kernel size", min_value=1,
+                                                   max_value=100, step=1)
+                                            stride = st.slider("Select stride", min_value=1,
+                                                   max_value=100, step=1)
+                                            padding = st.slider("Select padding", min_value=0, max_value=100)
+                                            m=nn.AvgPool2d(kernel_size,stride, padding, ceil_mode=False, count_include_pad=True, divisor_override=None)
+                                            layer2=m
+                                elif ch3=="Maxpool2d":
+                                            kernel_size = st.slider("Select kernel size", min_value=1,
+                                                   max_value=100, step=1)
+                                            stride = st.slider("Select stride", min_value=1,
+                                                   max_value=100, step=1)
+                                            padding = st.slider("Select padding", min_value=0, max_value=100)
+                                            m=nn.MaxPool2d(kernel_size, stride, padding, dilation=1)
+                                            layer2=m
+                                elif ch3=="ReplicationPad":
+                                    padding=st.slider("Select padding",min_value=1, max_value=1000)
+                                    m=nn.ReplicationPad2d(padding)
+                                    layer2=m
+                                elif ch3=="ReflectionPad":
+                                    padding=st.slider("Select padding",min_value=1, max_value=1000)
+                                    m=nn.ReflectionPad2d(padding)
+                                    layer2=m
+                                elif ch3=="LLPool2d":
+                                            norm_type=st.number_input("Enter norm",0,10)
+                                            kernel_size = st.slider("Select kernel size", min_value=1,
+                                                   max_value=100, step=1)
+                                            stride = st.slider("Select stride", min_value=1,
+                                                   max_value=100, step=1)
+                                            padding = st.slider("Select padding", min_value=0, max_value=100)
+                                            m=nn.LPPool2d(norm_type,kernel_size, stride, ceil_mode=False)
+                                            layer2=m
+                                else:
+                                        kernel_size = st.slider("Select kernel size", min_value=1,
+                                                   max_value=100, step=1)
+                                        stride = st.slider("Select stride", min_value=1,
+                                                   max_value=100, step=1)
+                                        padding = st.slider("Select padding", min_value=0, max_value=100)
+                                        m=nn.LazyConv2d(3,kernel_size=kernel_size, stride=stride, padding=padding, dilation=1, groups=1, bias=True, padding_mode='zeros', device=None, dtype=None)
+                                        layer2=m
+                                t=nn.Sequential(layer1,layer2)
+                                k=(t(Mk).detach().numpy())[0]
+                                st.image(work.image(k),clamp=True,channels="BGR")
+                            elif ch2=="ReflectionPad":
+                                padding=st.slider("Select padding",min_value=1, max_value=1000)
+                                m=nn.ReflectionPad2d(padding)
+                                layer1=m
+                                ch3=st.selectbox("Choose 2nd layer",options=("Conv2d","LazyConv2D","Maxpool2d","Avgpool2d","LLPool2d","ReplicationPad","ReflectionPad"))
+                                if ch3=="Conv2d":
+                                    kernel_size = st.slider("Select kernel size", min_value=1,
+                                           max_value=100, step=1)
+                                    stride = st.slider("Select stride", min_value=1,
+                                           max_value=100, step=1)
+                                    padding = st.slider("Select padding", min_value=0, max_value=100)
+                                    dilation=st.slider("Select Dilation",min_value=1, max_value=100)
+                                    groups=st.slider("Select Groups(not useful in pooling layers)",min_value=1, max_value=999)
+                                    m=nn.Conv2d(3, 3, kernel_size=kernel_size, stride=stride, padding=padding, dilation=1, groups=1, bias=True, padding_mode='zeros', device=None, dtype=None)
+                                    layer2=m
+                                elif ch3=="Avgpool2d":
+                                            kernel_size = st.slider("Select kernel size", min_value=1,
+                                                   max_value=100, step=1)
+                                            stride = st.slider("Select stride", min_value=1,
+                                                   max_value=100, step=1)
+                                            padding = st.slider("Select padding", min_value=0, max_value=100)
+                                            m=nn.AvgPool2d(kernel_size,stride, padding, ceil_mode=False, count_include_pad=True, divisor_override=None)
+                                            layer2=m
+                                elif ch3=="Maxpool2d":
+                                            kernel_size = st.slider("Select kernel size", min_value=1,
+                                                   max_value=100, step=1)
+                                            stride = st.slider("Select stride", min_value=1,
+                                                   max_value=100, step=1)
+                                            padding = st.slider("Select padding", min_value=0, max_value=100)
+                                            m=nn.MaxPool2d(kernel_size, stride, padding, dilation=1)
+                                            layer2=m
+                                elif ch3=="ReplicationPad":
+                                    padding=st.slider("Select padding",min_value=1, max_value=1000)
+                                    m=nn.ReplicationPad2d(padding)
+                                    layer2=m
+                                elif ch3=="ReflectionPad":
+                                    padding=st.slider("Select padding",min_value=1, max_value=1000)
+                                    m=nn.ReflectionPad2d(padding)
+                                    layer2=m
+                                elif ch3=="LLPool2d":
+                                            norm_type=st.number_input("Enter norm",0,10)
+                                            kernel_size = st.slider("Select kernel size", min_value=1,
+                                                   max_value=100, step=1)
+                                            stride = st.slider("Select stride", min_value=1,
+                                                   max_value=100, step=1)
+                                            padding = st.slider("Select padding", min_value=0, max_value=100)
+                                            m=nn.LPPool2d(norm_type,kernel_size, stride, ceil_mode=False)
+                                            layer2=m
+                                else:
+                                        kernel_size = st.slider("Select kernel size", min_value=1,
+                                                   max_value=100, step=1)
+                                        stride = st.slider("Select stride", min_value=1,
+                                                   max_value=100, step=1)
+                                        padding = st.slider("Select padding", min_value=0, max_value=100)
+                                        m=nn.LazyConv2d(3,kernel_size=kernel_size, stride=stride, padding=padding, dilation=1, groups=1, bias=True, padding_mode='zeros', device=None, dtype=None)
+                                        layer2=m
+                                t=nn.Sequential(layer1,layer2)
+                                k=(t(Mk).detach().numpy())[0]
+                                st.image(work.image(k),clamp=True,channels="BGR")
+                            elif ch2=="LLPool2d":
+                                        norm_type=st.number_input("Enter norm",0,10)
+                                        kernel_size = st.slider("Select kernel size", min_value=1,
+                                               max_value=100, step=1)
+                                        stride = st.slider("Select stride", min_value=1,
+                                               max_value=100, step=1)
+                                        padding = st.slider("Select padding", min_value=0, max_value=100)
+                                        m=nn.LPPool2d(norm_type,kernel_size, stride, ceil_mode=False)
+                                        layer1=m
+                                        ch3=st.selectbox("Choose 2nd layer",options=("Conv2d","LazyConv2D","Maxpool2d","Avgpool2d","LLPool2d","ReplicationPad","ReflectionPad"))
+                                        if ch3=="Conv2d":
+                                            kernel_size = st.slider("Select kernel size", min_value=1,
+                                                   max_value=100, step=1)
+                                            stride = st.slider("Select stride", min_value=1,
+                                                   max_value=100, step=1)
+                                            padding = st.slider("Select padding", min_value=0, max_value=100)
+                                            dilation=st.slider("Select Dilation",min_value=1, max_value=100)
+                                            groups=st.slider("Select Groups(not useful in pooling layers)",min_value=1, max_value=999)
+                                            m=nn.Conv2d(3, 3, kernel_size=kernel_size, stride=stride, padding=padding, dilation=1, groups=1, bias=True, padding_mode='zeros', device=None, dtype=None)
+                                            layer2=m
+                                        elif ch3=="Avgpool2d":
+                                                    kernel_size = st.slider("Select kernel size", min_value=1,
+                                                           max_value=100, step=1)
+                                                    stride = st.slider("Select stride", min_value=1,
+                                                           max_value=100, step=1)
+                                                    padding = st.slider("Select padding", min_value=0, max_value=100)
+                                                    m=nn.AvgPool2d(kernel_size,stride, padding, ceil_mode=False, count_include_pad=True, divisor_override=None)
+                                                    layer2=m
+                                        elif ch3=="Maxpool2d":
+                                                    kernel_size = st.slider("Select kernel size", min_value=1,
+                                                           max_value=100, step=1)
+                                                    stride = st.slider("Select stride", min_value=1,
+                                                           max_value=100, step=1)
+                                                    padding = st.slider("Select padding", min_value=0, max_value=100)
+                                                    m=nn.MaxPool2d(kernel_size, stride, padding, dilation=1)
+                                                    layer2=m
+                                        elif ch3=="ReplicationPad":
+                                            padding=st.slider("Select padding",min_value=1, max_value=1000)
+                                            m=nn.ReplicationPad2d(padding)
+                                            layer2=m
+                                        elif ch3=="ReflectionPad":
+                                            padding=st.slider("Select padding",min_value=1, max_value=1000)
+                                            m=nn.ReflectionPad2d(padding)
+                                            layer2=m
+                                        elif ch3=="LLPool2d":
+                                                    norm_type=st.number_input("Enter norm",0,10)
+                                                    kernel_size = st.slider("Select kernel size", min_value=1,
+                                                           max_value=100, step=1)
+                                                    stride = st.slider("Select stride", min_value=1,
+                                                           max_value=100, step=1)
+                                                    padding = st.slider("Select padding", min_value=0, max_value=100)
+                                                    m=nn.LPPool2d(norm_type,kernel_size, stride, ceil_mode=False)
+                                                    layer2=m
+                                        else:
+                                                kernel_size = st.slider("Select kernel size", min_value=1,
+                                                           max_value=100, step=1)
+                                                stride = st.slider("Select stride", min_value=1,
+                                                           max_value=100, step=1)
+                                                padding = st.slider("Select padding", min_value=0, max_value=100)
+                                                m=nn.LazyConv2d(3,kernel_size=kernel_size, stride=stride, padding=padding, dilation=1, groups=1, bias=True, padding_mode='zeros', device=None, dtype=None)
+                                                layer2=m
+                                        t=nn.Sequential(layer1,layer2)
+                                        k=(t(Mk).detach().numpy())[0]
+                                        st.image(work.image(k),clamp=True,channels="BGR")
+                            else:
+                                    kernel_size = st.slider("Select kernel size", min_value=1,
+                                               max_value=100, step=1)
+                                    stride = st.slider("Select stride", min_value=1,
+                                               max_value=100, step=1)
+                                    padding = st.slider("Select padding", min_value=0, max_value=100)
+                                    m=nn.LazyConv2d(3,kernel_size=kernel_size, stride=stride, padding=padding, dilation=1, groups=1, bias=True, padding_mode='zeros', device=None, dtype=None)
+                                    layer1=m
+                                    ch3=st.selectbox("Choose 2nd layer",options=("Conv2d","LazyConv2D","Maxpool2d","Avgpool2d","LLPool2d","ReplicationPad","ReflectionPad"))
+                                    if ch3=="Conv2d":
+                                        kernel_size = st.slider("Select kernel size", min_value=1,
+                                               max_value=100, step=1)
+                                        stride = st.slider("Select stride", min_value=1,
+                                               max_value=100, step=1)
+                                        padding = st.slider("Select padding", min_value=0, max_value=100)
+                                        dilation=st.slider("Select Dilation",min_value=1, max_value=100)
+                                        groups=st.slider("Select Groups(not useful in pooling layers)",min_value=1, max_value=999)
+                                        m=nn.Conv2d(3, 3, kernel_size=kernel_size, stride=stride, padding=padding, dilation=1, groups=1, bias=True, padding_mode='zeros', device=None, dtype=None)
+                                        layer2=m
+                                    elif ch3=="Avgpool2d":
+                                                kernel_size = st.slider("Select kernel size", min_value=1,
+                                                       max_value=100, step=1)
+                                                stride = st.slider("Select stride", min_value=1,
+                                                       max_value=100, step=1)
+                                                padding = st.slider("Select padding", min_value=0, max_value=100)
+                                                m=nn.AvgPool2d(kernel_size,stride, padding, ceil_mode=False, count_include_pad=True, divisor_override=None)
+                                                layer2=m
+                                    elif ch3=="Maxpool2d":
+                                                kernel_size = st.slider("Select kernel size", min_value=1,
+                                                       max_value=100, step=1)
+                                                stride = st.slider("Select stride", min_value=1,
+                                                       max_value=100, step=1)
+                                                padding = st.slider("Select padding", min_value=0, max_value=100)
+                                                m=nn.MaxPool2d(kernel_size, stride, padding, dilation=1)
+                                                layer2=m
+                                    elif ch3=="ReplicationPad":
+                                        padding=st.slider("Select padding",min_value=1, max_value=1000)
+                                        m=nn.ReplicationPad2d(padding)
+                                        layer2=m
+                                    elif ch3=="ReflectionPad":
+                                        padding=st.slider("Select padding",min_value=1, max_value=1000)
+                                        m=nn.ReflectionPad2d(padding)
+                                        layer2=m
+                                    elif ch3=="LLPool2d":
+                                                norm_type=st.number_input("Enter norm",0,10)
+                                                kernel_size = st.slider("Select kernel size", min_value=1,
+                                                       max_value=100, step=1)
+                                                stride = st.slider("Select stride", min_value=1,
+                                                       max_value=100, step=1)
+                                                padding = st.slider("Select padding", min_value=0, max_value=100)
+                                                m=nn.LPPool2d(norm_type,kernel_size, stride, ceil_mode=False)
+                                                layer2=m
+                                    else:
+                                            kernel_size = st.slider("Select kernel size", min_value=1,
+                                                       max_value=100, step=1)
+                                            stride = st.slider("Select stride", min_value=1,
+                                                       max_value=100, step=1)
+                                            padding = st.slider("Select padding", min_value=0, max_value=100)
+                                            m=nn.LazyConv2d(3,kernel_size=kernel_size, stride=stride, padding=padding, dilation=1, groups=1, bias=True, padding_mode='zeros', device=None, dtype=None)
+                                            layer2=m
+                                    t=nn.Sequential(layer1,layer2)
+                                    k=(t(Mk).detach().numpy())[0]
+                                    st.image(work.image(k),clamp=True,channels="BGR")
+                else:
+                        kernel_size = st.slider("Select kernel size", min_value=1,
+                                   max_value=100, step=1)
+                        stride = st.slider("Select stride", min_value=1,
+                                   max_value=100, step=1)
+                        padding = st.slider("Select padding", min_value=0, max_value=100)
+                        m=nn.LazyConv2d(3,kernel_size=kernel_size, stride=stride, padding=padding, dilation=1, groups=1, bias=True, padding_mode='zeros', device=None, dtype=None)
+                        k=(m(Mk).detach().numpy())[0]
+                        st.image(work.image(k),clamp=True,channels="BGR")
+        #st.image(k.permute(1,2,0).numpy())
+            
+    except:
+        print("Invalid")
+           
     
-elif (option=="Image processing"):
-    opt23=st.radio("Do you wish to upload from file or url", ("File","Url"))
-    f1=[]
-    if (opt23=="File"):
-        f1=st.file_uploader("Select your files",type=["jpg",'png',"jpeg"])
+    #x,y=symbols('x y')
+    #lk = st.text_area("Write", value="Ok")
+    #lk1 = st.write(latex(lk))
+    # m=diff(expr,x,e,y,f)
+    # st.latex(latex(expr))
+    # st.latex(latex(m))
+        
+elif (option == "Image processing"):
+    opt23 = st.radio("Do you wish to upload from file or url", ("File", "Url"))
+    f1 = []
+    if (opt23 == "File"):
+        f1 = st.file_uploader("Select your files", type=["jpg", 'png', "jpeg"])
         if f1 is not None:
             file_bytes = np.asarray(bytearray(f1.read()), dtype=np.uint8)
             opencv_image = cv.imdecode(file_bytes, 1)
-            opt=st.selectbox("Select the process option", ("Thresholding","Gradient","Morphological transform","Blur","Edges"))
-            if (opt=="Edges"):
-                j1=st.slider("Select dim1",min_value=0,max_value=1000)
-                j2=st.slider("Select dim2",min_value=0,max_value=1000)
-                m=funct.edges(opencv_image,j1,j2)
+            opt = st.selectbox("Select the process option", ("Thresholding",
+                               "Gradient", "Morphological transform", "Blur", "Edges"))
+            if (opt == "Edges"):
+                j1 = st.slider("Select dim1", min_value=0, max_value=1000)
+                j2 = st.slider("Select dim2", min_value=0, max_value=1000)
+                m = funct.edges(opencv_image, j1, j2)
                 st.image(m)
-            elif (opt=="Thresholding"):
-                k2=st.selectbox("Select threshold object", ("Global","Adaptive"))
-                k3=st.slider("Select Ad1",min_value=1,max_value=127,step=2)
-                k4=st.slider("Select Ad2",min_value=1,max_value=255,step=2)
-                k5=st.slider("Select Ad3",min_value=1,max_value=10)
-                if (k2=="Global"):
-                    m,m1,m2,m3,m4=funct.threshold(opencv_image,option=k2,adv1=k3,adv2=(k4),adv3=(k5))
-                    st.image(m,caption="Binary thresh")
-                    st.image(m1,caption="Inverse binary")
-                    st.image(m2,caption="Truncated")
-                    st.image(m3,caption="To zero")
-                    st.image(m4,caption="Inverse zero")
+            elif (opt == "Thresholding"):
+                k2 = st.selectbox("Select threshold object",
+                                  ("Global", "Adaptive"))
+                k3 = st.slider("Select Ad1", min_value=1,
+                               max_value=127, step=2)
+                k4 = st.slider("Select Ad2", min_value=1,
+                               max_value=255, step=2)
+                k5 = st.slider("Select Ad3", min_value=1, max_value=10)
+                if (k2 == "Global"):
+                    m, m1, m2, m3, m4 = funct.threshold(
+                        opencv_image, option=k2, adv1=k3, adv2=(k4), adv3=(k5))
+                    st.image(m, caption="Binary thresh")
+                    st.image(m1, caption="Inverse binary")
+                    st.image(m2, caption="Truncated")
+                    st.image(m3, caption="To zero")
+                    st.image(m4, caption="Inverse zero")
                 else:
-                    m,m1=funct.threshold(opencv_image,adv1=k3,adv2=(k4),adv3=(k5))
-                    st.image(m,caption="Mean Adaptive thresh")
-                    st.image(m1,caption="Gaussian Adaptive thresh")
-            elif (opt=="Morphological transform"):
-                j1=st.slider("Select dimension of kernel",min_value=1,max_value=500)
-                j2=st.slider("Select denominator",min_value=1,max_value=256)
-                j3=st.slider("Select value",min_value=0,max_value=80)
-                j4=st.selectbox("Select the option", ("2D FIlt","erosion","dilation","open morph","close morph","morph grad","topht","Black"))
-                j8=funct.morph(opencv_image,j1, j2,j3,j4)
-                st.image(j8,caption=j4,channels="BGR")
-            elif (opt=="Gradient"):
-                    opt89=st.selectbox("Select the option", ("Laplacian","Sobelx","sobely","combo"))
-                    c=st.slider("Select ksize",min_value=1,max_value=31,step=2)
-                    if (opt89=="combo"):
-                        s1,s2,s3=funct.gradient(opencv_image,c=c)
-                        st.image(s1,clamp=True)
-                        st.image(s2,clamp=True)
-                        st.image(s3,clamp=True)
-                        m=st.selectbox("Select Color",("HSV", "RGB CIE", "XYZ", "YUV", "YIQ", "YPbPr", "YCbCr", "YDbDr"))
-                        l=convert_colorspace(s1,"RGB",m)
-                        st.image(l,clamp=True)
-                        l1=convert_colorspace(s1,"RGB",m)
-                        st.image(l1,clamp=True)
-                        l2=convert_colorspace(s3,"RGB",m)
-                        st.image(l2,clamp=True)
-                    else:
-                        s12=funct.gradient(opencv_image,option=opt89,c=c)
-                        st.image(s12,caption=opt89,clamp=True)
-                        m=st.selectbox("Select Color",("HSV", "RGB CIE", "XYZ", "YUV", "YIQ", "YPbPr", "YCbCr", "YDbDr"))
+                    m, m1 = funct.threshold(
+                        opencv_image, adv1=k3, adv2=(k4), adv3=(k5))
+                    st.image(m, caption="Mean Adaptive thresh")
+                    st.image(m1, caption="Gaussian Adaptive thresh")
+            elif (opt == "Morphological transform"):
+                j1 = st.slider("Select dimension of kernel",
+                               min_value=1, max_value=500)
+                j2 = st.slider("Select denominator",
+                               min_value=1, max_value=256)
+                j3 = st.slider("Select value", min_value=0, max_value=80)
+                j4 = st.selectbox("Select the option", ("2D FIlt", "erosion", "dilation",
+                                  "open morph", "close morph", "morph grad", "topht", "Black"))
+                j8 = funct.morph(opencv_image, j1, j2, j3, j4)
+                st.image(j8, caption=j4, channels="BGR")
+            elif (opt == "Gradient"):
+                opt89 = st.selectbox(
+                    "Select the option", ("Laplacian", "Sobelx", "sobely", "combo"))
+                c = st.slider("Select ksize", min_value=1,
+                              max_value=31, step=2)
+                if (opt89 == "combo"):
+                    s1, s2, s3 = funct.gradient(opencv_image, c=c)
+                    st.image(s1, clamp=True)
+                    st.image(s2, clamp=True)
+                    st.image(s3, clamp=True)
+                    m = st.selectbox(
+                        "Select Color", ("HSV", "RGB CIE", "XYZ", "YUV", "YIQ", "YPbPr", "YCbCr", "YDbDr"))
+                    l = convert_colorspace(s1, "RGB", m)
+                    st.image(l, clamp=True)
+                    l1 = convert_colorspace(s1, "RGB", m)
+                    st.image(l1, clamp=True)
+                    l2 = convert_colorspace(s3, "RGB", m)
+                    st.image(l2, clamp=True)
+                else:
+                    s12 = funct.gradient(opencv_image, option=opt89, c=c)
+                    st.image(s12, caption=opt89, clamp=True)
+                    m = st.selectbox(
+                        "Select Color", ("HSV", "RGB CIE", "XYZ", "YUV", "YIQ", "YPbPr", "YCbCr", "YDbDr"))
 
-                        l=convert_colorspace(s12,"RGB",m)
-                        st.image(l,clamp=True)
+                    l = convert_colorspace(s12, "RGB", m)
+                    st.image(l, clamp=True)
             else:
-                    s1=st.selectbox('Option choose', ("Median Blur","Gaussian blur","Bilateral",'blur'))
-                    s2=st.slider("Select A",min_value=1,max_value=301,step=2)
-                    s3=st.slider("select B",min_value=1,max_value=301,step=2)
-                    s4=st.slider("select C",min_value=1,max_value=301,step=2)
-                    yt=funct.blur(opencv_image,s1,s2,s3,s4)
-                    st.image(yt,caption=s1,channels="BGR")
-                    m=st.selectbox("Select Color",("HSV", "RGB CIE", "XYZ", "YUV", "YIQ", "YPbPr", "YCbCr", "YDbDr"))
-                    l=convert_colorspace(yt,"RGB",m)
-                    st.image(l,clamp=True)
+                s1 = st.selectbox(
+                    'Option choose', ("Median Blur", "Gaussian blur", "Bilateral", 'blur'))
+                s2 = st.slider("Select A", min_value=1, max_value=301, step=2)
+                s3 = st.slider("select B", min_value=1, max_value=301, step=2)
+                s4 = st.slider("select C", min_value=1, max_value=301, step=2)
+                yt = funct.blur(opencv_image, s1, s2, s3, s4)
+                st.image(yt, caption=s1, channels="BGR")
+                m = st.selectbox("Select Color", ("HSV", "RGB CIE",
+                                 "XYZ", "YUV", "YIQ", "YPbPr", "YCbCr", "YDbDr"))
+                l = convert_colorspace(yt, "RGB", m)
+                st.image(l, clamp=True)
     else:
-        wew=st.text_input("Write the url")
-        if wew!="":
-            req=Request(wew,headers={'User-Agent': 'Mozilla/5.0'})
-            f1=urlopen(req)
+        wew = st.text_input("Write the url")
+        if wew != "":
+            req = Request(wew, headers={'User-Agent': 'Mozilla/5.0'})
+            f1 = urlopen(req)
             if f1 is not None:
                 file_bytes = np.asarray(bytearray(f1.read()), dtype=np.uint8)
                 opencv_image = cv.imdecode(file_bytes, 1)
-                opt=st.selectbox("Select the process option", ("Thresholding","Gradient","Morphological transform","Blur","Edges"))
-                if (opt=="Edges"):
-                    j1=st.slider("Select dim1",min_value=0,max_value=1000)
-                    j2=st.slider("Select dim2",min_value=0,max_value=1000)
-                    m=funct.edges(opencv_image,j1,j2)
+                opt = st.selectbox("Select the process option", ("Thresholding",
+                                   "Gradient", "Morphological transform", "Blur", "Edges"))
+                if (opt == "Edges"):
+                    j1 = st.slider("Select dim1", min_value=0, max_value=1000)
+                    j2 = st.slider("Select dim2", min_value=0, max_value=1000)
+                    m = funct.edges(opencv_image, j1, j2)
                     st.image(m)
-                elif (opt=="Thresholding"):
-                    k2=st.selectbox("Select threshold object", ("Global","Adaptive"))
-                    k3=st.slider("Select Ad1",min_value=1,max_value=127,step=2)
-                    k4=st.slider("Select Ad2",min_value=1,max_value=255,step=2)
-                    k5=st.slider("Select Ad3",min_value=1,max_value=10)
-                    if (k2=="Global"):
-                        m,m1,m2,m3,m4=funct.threshold(opencv_image,option=k2,adv1=k3,adv2=(k4),adv3=(k5))
-                        st.image(m1,caption="Inverse binary")
-                        st.image(m2,caption="Truncated")
-                        st.image(m3,caption="To zero")
-                        st.image(m4,caption="Inverse zero")
-                        t=np.concatenate((m1,m2,m3,m4), axis=0)
+                elif (opt == "Thresholding"):
+                    k2 = st.selectbox("Select threshold object",
+                                      ("Global", "Adaptive"))
+                    k3 = st.slider("Select Ad1", min_value=1,
+                                   max_value=127, step=2)
+                    k4 = st.slider("Select Ad2", min_value=1,
+                                   max_value=255, step=2)
+                    k5 = st.slider("Select Ad3", min_value=1, max_value=10)
+                    if (k2 == "Global"):
+                        m, m1, m2, m3, m4 = funct.threshold(
+                            opencv_image, option=k2, adv1=k3, adv2=(k4), adv3=(k5))
+                        st.image(m1, caption="Inverse binary")
+                        st.image(m2, caption="Truncated")
+                        st.image(m3, caption="To zero")
+                        st.image(m4, caption="Inverse zero")
+                        t = np.concatenate((m1, m2, m3, m4), axis=0)
                         st.image(t)
                     else:
-                        m,m1=funct.threshold(opencv_image,adv1=k3,adv2=(k4),adv3=(k5))
-                        st.image(m,caption="Mean Adaptive thresh")
-                        st.image(m1,caption="Gaussian Adaptive thresh")
-                        t=np.concatenate((m1,m), axis=1)
+                        m, m1 = funct.threshold(
+                            opencv_image, adv1=k3, adv2=(k4), adv3=(k5))
+                        st.image(m, caption="Mean Adaptive thresh")
+                        st.image(m1, caption="Gaussian Adaptive thresh")
+                        t = np.concatenate((m1, m), axis=1)
                         st.image(t)
-                elif (opt=="Morphological transform"):
-                    j1=st.slider("Select dimension of kernel",min_value=1,max_value=50)
-                    j2=st.slider("Select denominator",min_value=1,max_value=256)
-                    j3=st.slider("Select value",min_value=-1,max_value=80)
-                    j4=st.selectbox("Select the option", ("2D FIlt","erosion","dilation","open morph","close morph","morph grad","topht","Black"))
-                    j8=funct.morph(opencv_image,j1, j2,j3,j4)
-                    st.image(j8,caption=j4,channels="BGR")
-                    m=st.selectbox("Select Color",("HSV", "RGB CIE", "XYZ", "YUV", "YIQ", "YPbPr", "YCbCr", "YDbDr"))
-                    l=convert_colorspace(j8,"RGB",m)
-                    st.image(l,clamp=True)
-                elif (opt=="Gradient"):
-                    opt89=st.selectbox("Select the option", ("Laplacian","Sobelx","sobely","combo"))
-                    c=st.slider("Select ksize",min_value=1,max_value=31,step=2)
-                    if (opt89=="combo"):
-                        s1,s2,s3=funct.gradient(opencv_image,c=c)
-                        st.image(s1,clamp=True)
-                        st.image(s2,clamp=True)
-                        st.image(s3,clamp=True)
-                        m=st.selectbox("Select Color",("HSV", "RGB CIE", "XYZ", "YUV", "YIQ", "YPbPr", "YCbCr", "YDbDr"))
-                        l=convert_colorspace(s1,"RGB",m)
-                        st.image(l,clamp=True)
-                        l1=convert_colorspace(s1,"RGB",m)
-                        st.image(l1,clamp=True)
-                        l2=convert_colorspace(s3,"RGB",m)
-                        st.image(l2,clamp=True)
+                elif (opt == "Morphological transform"):
+                    j1 = st.slider("Select dimension of kernel",
+                                   min_value=1, max_value=50)
+                    j2 = st.slider("Select denominator",
+                                   min_value=1, max_value=256)
+                    j3 = st.slider("Select value", min_value=-1, max_value=80)
+                    j4 = st.selectbox("Select the option", ("2D FIlt", "erosion", "dilation",
+                                      "open morph", "close morph", "morph grad", "topht", "Black"))
+                    j8 = funct.morph(opencv_image, j1, j2, j3, j4)
+                    st.image(j8, caption=j4, channels="BGR")
+                    m = st.selectbox(
+                        "Select Color", ("HSV", "RGB CIE", "XYZ", "YUV", "YIQ", "YPbPr", "YCbCr", "YDbDr"))
+                    l = convert_colorspace(j8, "RGB", m)
+                    st.image(l, clamp=True)
+                elif (opt == "Gradient"):
+                    opt89 = st.selectbox(
+                        "Select the option", ("Laplacian", "Sobelx", "sobely", "combo"))
+                    c = st.slider("Select ksize", min_value=1,
+                                  max_value=31, step=2)
+                    if (opt89 == "combo"):
+                        s1, s2, s3 = funct.gradient(opencv_image, c=c)
+                        st.image(s1, clamp=True)
+                        st.image(s2, clamp=True)
+                        st.image(s3, clamp=True)
+                        m = st.selectbox(
+                            "Select Color", ("HSV", "RGB CIE", "XYZ", "YUV", "YIQ", "YPbPr", "YCbCr", "YDbDr"))
+                        l = convert_colorspace(s1, "RGB", m)
+                        st.image(l, clamp=True)
+                        l1 = convert_colorspace(s1, "RGB", m)
+                        st.image(l1, clamp=True)
+                        l2 = convert_colorspace(s3, "RGB", m)
+                        st.image(l2, clamp=True)
                     else:
-                        s12=funct.gradient(opencv_image,option=opt89,c=c)
-                        st.image(s12,caption=opt89,clamp=True)
-                        m=st.selectbox("Select Color",("HSV", "RGB CIE", "XYZ", "YUV", "YIQ", "YPbPr", "YCbCr", "YDbDr"))
-                        l=convert_colorspace(s12,"RGB",m)
-                        st.image(l,clamp=True)
+                        s12 = funct.gradient(opencv_image, option=opt89, c=c)
+                        st.image(s12, caption=opt89, clamp=True)
+                        m = st.selectbox(
+                            "Select Color", ("HSV", "RGB CIE", "XYZ", "YUV", "YIQ", "YPbPr", "YCbCr", "YDbDr"))
+                        l = convert_colorspace(s12, "RGB", m)
+                        st.image(l, clamp=True)
                 else:
-                    s1=st.selectbox('Option choose', ("Median Blur","Gaussian blur","Bilateral",'blur'))
-                    s2=st.slider("Select A",min_value=1,max_value=301,step=2)
-                    s3=st.slider("select B",min_value=1,max_value=301,step=2)
-                    s4=st.slider("select C",min_value=1,max_value=301,step=2)
-                    yt=funct.blur(opencv_image,s1,s2,s3,s4)
-                    st.image(yt,caption=s1,channels="BGR")
-                    m=st.selectbox("Select Color",("HSV", "RGB CIE", "XYZ", "YUV", "YIQ", "YPbPr", "YCbCr", "YDbDr"))
-                    l=convert_colorspace(yt,"RGB",m)
-                    st.image(l,clamp=True)
+                    s1 = st.selectbox(
+                        'Option choose', ("Median Blur", "Gaussian blur", "Bilateral", 'blur'))
+                    s2 = st.slider("Select A", min_value=1,
+                                   max_value=301, step=2)
+                    s3 = st.slider("select B", min_value=1,
+                                   max_value=301, step=2)
+                    s4 = st.slider("select C", min_value=1,
+                                   max_value=301, step=2)
+                    yt = funct.blur(opencv_image, s1, s2, s3, s4)
+                    st.image(yt, caption=s1, channels="BGR")
+                    m = st.selectbox(
+                        "Select Color", ("HSV", "RGB CIE", "XYZ", "YUV", "YIQ", "YPbPr", "YCbCr", "YDbDr"))
+                    l = convert_colorspace(yt, "RGB", m)
+                    st.image(l, clamp=True)
 else:
     st.write("For Continuum assumption to hold true,Knudson number(Kn)<0.01")
     st.latex(r'''Kn=\frac{\lambda}{L}''')
-    st.markdown('Where λ is Mean Free Path and L is Characteristic Length(Diameter of pipe in pipe flow)')
+    st.markdown(
+        'Where λ is Mean Free Path and L is Characteristic Length(Diameter of pipe in pipe flow)')
     st.write(r'''Dynamic viscosity μ is defined as''')
     st.latex(r'''\tau=\mu\frac{du}{dy}''')
     st.write("And kinematic viscosity v is defined as")
     st.latex(r'''v=\frac{\mu}{\rho}''')
-    st.write(r'''Where τ is shear stress and du/dy is shear strain rate(or velocity gradient)''')
+    st.write(
+        r'''Where τ is shear stress and du/dy is shear strain rate(or velocity gradient)''')
     st.write("This formula is only valid for Newtonian fluids for non-Newtonian fluids following the general formula")
     st.latex(r'''\tau=m|\frac{du}{dy}|^{n-1}\frac{du}{dy}''')
     st.write("Following plot shows variation where m is flow consistency index and n is flow behaviour index")
-    st.image("https://www.researchgate.net/profile/Issam-Ashqer/publication/275526328/figure/fig2/AS:614162166202397@1523439079676/Fig21-These-are-a-Bingham-plastics-b-pseudoplastic-fluids-and-c-dilatant.png",width=400)
+    st.image("https://www.researchgate.net/profile/Issam-Ashqer/publication/275526328/figure/fig2/AS:614162166202397@1523439079676/Fig21-These-are-a-Bingham-plastics-b-pseudoplastic-fluids-and-c-dilatant.png", width=400)
     st.write("Bulk Modulus has the following formula")
     st.latex(r'''K=\frac{dp}{-dV/V}''')
     st.write("For isothermal process: K=p")
     st.write("For adiabatic process:K=γP")
-    st.write("Hydrostatic law and pascal's law determine how pressure is measured in fluids")
-    st.latex(r'''P=\rho g h \implies h=\frac{P}{\rho g} \text {(Defined  as  pressure  head)}''')
+    st.write(
+        "Hydrostatic law and pascal's law determine how pressure is measured in fluids")
+    st.latex(
+        r'''P=\rho g h \implies h=\frac{P}{\rho g} \text {(Defined  as  pressure  head)}''')
     st.write("Pressure is measured in terms of gauge, absolute and vaccum pressure")
     st.write("Devices used for pressure measurement are Piezometer,Manometer(All types) and pressure gauges")
-    st.write("Hydrostatic forces on inclined surfaces is given by the following formula")
-    st.latex(r'''F=\rho gA \bar{h} \text{ with center of pressure being given by } h*=\bar{h}+\frac{Isin^2\theta}{A\bar{h}}''')
-    st.write("Here I is the area moment of inertia of the body about the considered axis")
+    st.write(
+        "Hydrostatic forces on inclined surfaces is given by the following formula")
+    st.latex(
+        r'''F=\rho gA \bar{h} \text{ with center of pressure being given by } h*=\bar{h}+\frac{Isin^2\theta}{A\bar{h}}''')
+    st.write(
+        "Here I is the area moment of inertia of the body about the considered axis")
     st.write("For forces on curved surfaces, we use")
     st.latex(r'''F(x)=\rho gA \bar{h} \text{ and } F(y)=\rho V_{(in)} g''')
     st.write("**Fluid Kinematics**")
     st.write("Steady flow:Fluid characteristics do not change with time")
     st.write("Uniform flow:Fluid characteristics do not change with space")
-    st.latex(r'''\vec{V}=u(x,y,z)\hat{i}+v(x,y,z)\hat{j}+w(x,y,z)\hat{k} \text{ represents general fluid velocity field or flow}''')
+    st.latex(
+        r'''\vec{V}=u(x,y,z)\hat{i}+v(x,y,z)\hat{j}+w(x,y,z)\hat{k} \text{ represents general fluid velocity field or flow}''')
     st.latex(r'''\text{ General expression of acceleraration in x is given by } a_x=\underbrace{u\frac{\partial u}{\partial x}+v\frac{\partial u}{\partial y}+w\frac{\partial u}{\partial z}}_\text{Convective acceleration}+\underbrace{\frac{\partial u}{\partial t}}_\text{ Local acceleration}''')
-    st.latex(r'''\text{For finding streamline equation use } \vec{V}\times\vec{dS}=0''')
+    st.latex(
+        r'''\text{For finding streamline equation use } \vec{V}\times\vec{dS}=0''')
     st.write("OR")
     st.latex(r'''\frac{dx}{u}=\frac{dy}{v}=\frac{dz}{w}''')
-    st.latex(r'''\text{ If } \vec{\nabla}\times\vec{V}=0 \text{,flow is called irrotational}''')
-    st.write("The curl quantity is called vortitcity of the flow and rotation in flow is defined as")
+    st.latex(
+        r'''\text{ If } \vec{\nabla}\times\vec{V}=0 \text{,flow is called irrotational}''')
+    st.write(
+        "The curl quantity is called vortitcity of the flow and rotation in flow is defined as")
     st.latex(r'''\omega=\frac{\vec{\nabla}\times\vec{V}}{2}''')
     st.write("Continuity equation,velocity potential and stream functions")
-    st.latex(r'''\text{Continuity equation:} \frac{\partial \rho}{\partial t}+\vec{\nabla}\cdot\vec{\rho V}=0''')
-    st.latex(r'''\vec{\nabla}\cdot\vec{u}=\frac{\partial u}{\partial x}+\frac{\partial u}{\partial y}+\frac{\partial u}{\partial z}''')
+    st.latex(
+        r'''\text{Continuity equation:} \frac{\partial \rho}{\partial t}+\vec{\nabla}\cdot\vec{\rho V}=0''')
+    st.latex(
+        r'''\vec{\nabla}\cdot\vec{u}=\frac{\partial u}{\partial x}+\frac{\partial u}{\partial y}+\frac{\partial u}{\partial z}''')
     st.latex(r'''\text{Velocity potential is denoted by} \phi''')
-    st.latex(r'''\frac{\partial \phi}{\partial x}=-u, \frac{\partial \phi}{\partial y}=-v , \frac{\partial \phi}{\partial z}=-w''')
-    st.latex(r'''\text{Stream function is denoted by } \psi \text{ and is valid only for 2D flow}''')
-    st.latex(r'''\frac{\partial \psi}{\partial x}=-v, \frac{\partial \psi}{\partial y}=+u''')
+    st.latex(
+        r'''\frac{\partial \phi}{\partial x}=-u, \frac{\partial \phi}{\partial y}=-v , \frac{\partial \phi}{\partial z}=-w''')
+    st.latex(
+        r'''\text{Stream function is denoted by } \psi \text{ and is valid only for 2D flow}''')
+    st.latex(
+        r'''\frac{\partial \psi}{\partial x}=-v, \frac{\partial \psi}{\partial y}=+u''')
     st.write("A point worth noting is that stream function won't change physically if you revrese signs on both differential equations")
     st.write("**Fluid dynamics**")
-    st.write("Euler's equation and Bernoulli's equation drive fluid dynamics at elementary level")
+    st.write(
+        "Euler's equation and Bernoulli's equation drive fluid dynamics at elementary level")
+    st.latex(r'''\frac{P}{\rho g}+\frac{v^2}{2g}+z= \text{ constant } \text{ is the formal definition of Bernoulli's equation }''')
     
-
-	 
