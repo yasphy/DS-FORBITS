@@ -3,3 +3,7 @@ urllib3==1.26.4
 scikit-image==0.18.1
 numpy==1.20.2
 opencv-python-headless==4.2.0.32
+torchvision==0.13.1
+torch==1.12.1
+pillow==9.0.1
+os
