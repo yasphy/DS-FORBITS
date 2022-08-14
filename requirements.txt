@@ -6,4 +6,3 @@ opencv-python-headless==4.2.0.32
 torchvision==0.13.1
 torch==1.12.1
 pillow==9.0.1
-os
