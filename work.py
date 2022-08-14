@@ -26,8 +26,8 @@ def image(im):
     im=torch.from_numpy(im)
     im=im.permute(1,2,0).numpy()
     return im
-def datasetmaker(name):
-    m=TFDataset([os.path.join("D:\Games\PY Files\PICS",name)],torchvision.transforms.ToTensor())
+def datasetmaker(dirname,name):
+    m=TFDataset([os.path.join(dirname,name)],torchvision.transforms.ToTensor())
     train_dataloader = DataLoader(m, batch_size=4, shuffle=True)
     train_features = next(iter(train_dataloader))
     #img=(train_features[0]).permute(1,2,0).numpy()
